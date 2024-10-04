@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id             Int             @id @default(autoincrement())
+  first_name     String          @db.VarChar(30)
+  last_name      String          @db.VarChar(30)
+  email          String          @unique @db.VarChar(50)
+  password       String          @db.Text
+  description    String?         @db.Text
+  url_avatar     String?         @db.Text
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
+  is_verify      Boolean         @default(false)
+  token          String?         @db.Text
+  is_admin       Boolean         @default(false)
+  is_deleted     Boolean         @default(false)
+  @@index([email], name: "idx_email")
+  blogs       Blog[]
+  reaction_blogs ReactionBlog[]
+  comment_blogs CommentBlog[]
+  reaction_comment_blogs ReactionCommentBlog[]
+  @@map(name: "user")
+
+}
+model Blog {
+  id  Int @id @default(autoincrement())
+  author_id Int
+  user      User     @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  title String    @db.VarChar(200)
+  slug String @db.VarChar(250) @unique
+  content String @db.Text
+  url_image         String           @db.Text
+  view Int @default(0)
+  created_at DateTime @default(now())  
+  updated_at DateTime
+  is_published     Boolean         @default(false)
+  is_deleted Boolean @default(false)
+  blog_categories BlogCategory[]
+  comment_blogs CommentBlog[]
+  reaction_blogs ReactionBlog[]
+    @@map(name: "blog")
+
+}
+model Category {
+  id                Int              @id @default(autoincrement())
+  title             String           @unique @db.VarChar(50)
+  url_image         String           @db.Text
+  description       String           @db.Text
+  blog_categories   BlogCategory[]
+    @@map(name: "category")
+
+}
+model BlogCategory {
+  id          Int      @id @default(autoincrement())
+  blog_id   Int
+  category_id Int
+  created_at  DateTime @default(now())
+  blog      Blog   @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  category    Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@map(name: "blogs_categories")
+}
+model ReactionBlog {
+  id                 Int          @id @default(autoincrement())
+  user_id            Int
+  user               User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  blog_id         Int 
+  blog            Blog  @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  type               ReactionType
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @default(now())
+    @@map(name: "reaction_blog")
+
+}
+model CommentBlog {
+  id             Int           @id @default(autoincrement())
+  content        String        @db.Text
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @default(now())
+  user_id        Int
+  user           User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  blog_id     Int
+  blog       Blog       @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  parent_id      Int?          // Id của bình luận cha, null nếu là bình luận gốc
+  parent_comment CommentBlog?  @relation("ReplyRelation", fields: [parent_id], references: [id], onDelete: Cascade)
+  replies        CommentBlog[] @relation("ReplyRelation")
+  reactions      ReactionCommentBlog[]
+  @@map(name: "comment_blog")
+}
+model ReactionCommentBlog {
+  id                 Int          @id @default(autoincrement())
+  user_id            Int
+  user               User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment_id         Int
+  comment_blog            CommentBlog  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  type               ReactionType
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @default(now())
+  @@map(name: "reaction_comment_blog")
+
+}
+enum ReactionType {
+  LIKE
+  DISLIKE
+}
