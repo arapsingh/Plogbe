@@ -6,14 +6,14 @@ const Joi = require('joi');
 // }
 const loginSchema = Joi.object({
     email: Joi.string()
-        .regex(/^\S+@\S+\.\S+$/)
+        .email({ minDomainSegments: 2 }) // Sử dụng phương thức email() để xác thực email
         .max(50)
         .trim()
         .required()
         .messages({
             'string.base': 'Email phải là chuỗi',
             'any.required': 'Email là bắt buộc',
-            'string.regex': 'Email sai định dạng',
+            'string.email': 'Email sai định dạng',
             'string.max': 'Email phải dưới 50 kí tự',
         }),
     password: Joi.string().trim().required().min(8).max(20).messages({
@@ -61,13 +61,13 @@ const resetPasswordSchema = Joi.object({
 const forgotPasswordSchema = Joi.object({
     email: Joi.string()
         .trim()
-        .regex(/^\S+@\S+\.\S+$/)
+        .email({ minDomainSegments: 2 }) // Sử dụng phương thức email() để xác thực email
         .required()
         .max(50)
         .messages({
             'string.base': 'Email phải là chuỗi',
             'any.required': 'Email là bắt buộc',
-            'string.regex': 'Định dạng email không đúng, Ví dụ: example@gmail.com',
+            'string.email': 'Định dạng email không đúng, Ví dụ: example@gmail.com',
             'string.max': 'Email tối đa 50 kí tự',
         }),
 });
@@ -84,13 +84,13 @@ const createNewUserSchema = Joi.object({
     }),
     email: Joi.string()
         .trim()
-        .regex(/^\S+@\S+\.\S+$/)
+        .email({ minDomainSegments: 2 }) // Sử dụng phương thức email() để xác thực email
         .required()
         .max(50)
         .messages({
             'string.base': 'Email phải là chuỗi',
             'any.required': 'Email là bắt buộc',
-            'string.regex': 'Định dạng email không đúng, Ví dụ: example@gmail.com',
+            'string.email': 'Định dạng email không đúng, Ví dụ: example@gmail.com',
             'string.max': 'Email tối đa 50 kí tự',
         }),
     password: Joi.string().trim().required().min(8).max(20).messages({
@@ -117,13 +117,13 @@ const editUserSchema = Joi.object({
     }),
     email: Joi.string()
         .trim()
-        .regex(/^\S+@\S+\.\S+$/)
+        .email({ minDomainSegments: 2 }) // Sử dụng phương thức email() để xác thực email
         .required()
         .max(50)
         .messages({
             'string.base': 'Email phải là chuỗi',
             'any.required': 'Email là bắt buộc',
-            'string.regex': 'Định dạng email không đúng, Ví dụ: example@gmail.com',
+            'string.email': 'Định dạng email không đúng, Ví dụ: example@gmail.com',
             'string.max': 'Email tối đa 50 kí tự',
         }),
     is_admin: Joi.boolean().required().messages({
