@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -24,6 +24,7 @@ jobs:
       - name: npm install, build, and test
         run: |
           cd backend
+          export DATABASE_URL=${{ secrets.DATABASE_URL }}
           npm install
           npx prisma generate
           npx prisma db push
