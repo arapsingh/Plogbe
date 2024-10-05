@@ -87,7 +87,7 @@ jobs:
             TZ=${{ secrets.TZ }}
       
       - name: List files in the downloaded artifact
-        run: ls -la node-app  # Kiểm tra xem thư mục có tồn tại không
+        run: ls -la  # Kiểm tra xem thư mục có tồn tại không
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
