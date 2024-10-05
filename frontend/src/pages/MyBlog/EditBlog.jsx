@@ -173,6 +173,11 @@ const EditBlog = () => {
         try {
             // const values = await form.validateFields(); // Get values from form
             const content = values.content;
+            if(content.length<1)
+            {
+                toast.error('Content phải có nội dung');
+                return;
+            }
             const oldContent = blog.content;
             // Regular expression to check for <img> tags
             const hasImage = /<img\s+[^>]*src="([^"]*)"[^>]*>/i.test(content);
