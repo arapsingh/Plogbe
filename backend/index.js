@@ -5,15 +5,16 @@ const cors = require('cors');
 const routes = require('./src/routes');
 const { Server } = require('socket.io'); // Import Socket.IO
 const http = require('http'); // Import HTTP module
+require('dotenv').config();
 const corsOptions = {
-    origin: 'http://localhost:3000', // Chỉ định nguồn cụ thể
+    origin: process.env.DOMAIN_NAME || 'http://localhost:3000', // Chỉ định nguồn cụ thể
     credentials: true, // Cho phép gửi cookie và thông tin xác thực
     optionsSuccessStatus: 200, // Để tương thích với các trình duyệt cũ
 };
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:3000', // Bạn có thể điều chỉnh origin
+        origin: process.env.DOMAIN_NAME || 'http://localhost:3000', // Bạn có thể điều chỉnh origin
         methods: ['GET', 'POST', 'PATCH', 'DELETE'],
         credentials: true,
     },
