@@ -83,4 +83,4 @@ jobs:
         with:
           app-name: 'plogbe'
           slot-name: 'Production'
-          package: backend/dist # Triển khai thư mục dist đã build
+          package: './node-app'  # Đường dẫn đến artifact đã tải về
