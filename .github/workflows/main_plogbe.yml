@@ -48,6 +48,15 @@ jobs:
       id-token: write #This is required for requesting the JWT
 
     steps:
+      - name: List all artifacts
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const artifacts = await github.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            console.log(artifacts.data.artifacts);
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
