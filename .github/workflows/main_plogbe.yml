@@ -77,6 +77,7 @@ jobs:
       - name: 'Set environment variables'
         run: |
           az webapp config appsettings set --name plogbe --resource-group HuuPhuoc --settings \
+            PORT=${{ secrets.PORT }} \
             DATABASE_URL=${{ secrets.DATABASE_URL }} \
             DOMAIN_NAME=${{ secrets.DOMAIN_NAME }} \
             BACKEND_DOMAIN_NAME=${{ secrets.BACKEND_DOMAIN_NAME }} \
