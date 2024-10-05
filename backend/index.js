@@ -6,14 +6,14 @@ const routes = require('./src/routes');
 const { Server } = require('socket.io'); // Import Socket.IO
 const http = require('http'); // Import HTTP module
 const corsOptions = {
-    origin: 'https://plogbe.vercel.app', // Chỉ định nguồn cụ thể
+    origin: 'http://localhost:3000', // Chỉ định nguồn cụ thể
     credentials: true, // Cho phép gửi cookie và thông tin xác thực
     optionsSuccessStatus: 200, // Để tương thích với các trình duyệt cũ
 };
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: 'http://plogbe.vercel.app', // Bạn có thể điều chỉnh origin
+        origin: 'http://localhost:3000', // Bạn có thể điều chỉnh origin
         methods: ['GET', 'POST', 'PATCH', 'DELETE'],
         credentials: true,
     },
