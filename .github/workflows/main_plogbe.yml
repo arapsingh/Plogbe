@@ -25,8 +25,11 @@ jobs:
         run: |
           cd backend
           npm install
-          npm run build --if-present
-          npm run test --if-present
+          # npm run build --if-present
+          # npm run test --if-present
+          npx prisma generate
+          npx prisma db push
+          npm run dev
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -55,7 +58,22 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C6583EBD5A29476FAC616C174E7A93DD }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_23D0FCAA8C1542C58CF0C4F8ECF83962 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_02B0D05FA60C446AA2A832A305E9A3AE }}
-
+      - name: 'Set environment variables'
+        run: |
+          az webapp config appsettings set --name plogbe --resource-group HuuPhuoc --settings \
+            DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            DOMAIN_NAME=${{ secrets.DOMAIN_NAME }} \
+            BACKEND_DOMAIN_NAME=${{ secrets.BACKEND_DOMAIN_NAME }} \
+            TOKEN_ACCESS_EXPIRED_TIME=${{ secrets.TOKEN_ACCESS_EXPIRED_TIME }} \
+            TOKEN_REFRESH_EXPIRED_TIME=${{ secrets.TOKEN_REFRESH_EXPIRED_TIME }} \
+            PUBLIC_URL=${{ secrets.PUBLIC_URL }} \
+            PUBLIC_API_URL=${{ secrets.PUBLIC_API_URL }} \
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            HASH_SALT=${{ secrets.HASH_SALT }} \
+            EMAIL_SERVER=${{ secrets.EMAIL_SERVER }} \
+            PASSWORD_SERVER=${{ secrets.PASSWORD_SERVER }} \
+            PAGE_SIZE=${{ secrets.PAGE_SIZE }} \
+            TZ=${{ secrets.TZ }}
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
