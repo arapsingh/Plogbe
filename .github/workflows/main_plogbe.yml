@@ -110,4 +110,4 @@ jobs:
         with:
           app-name: 'plogbe'
           slot-name: 'Production'
-          package: 'node-app/dist/index.js'  # Chỉ định đến file chính của ứng dụng
+          package: 'node-app/dist'  # Chỉ định đến file chính của ứng dụng
