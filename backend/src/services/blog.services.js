@@ -4,6 +4,7 @@ const helper = require('../helper');
 const slugify = require('slugify');
 const { ReactionType } = require('@prisma/client');
 const { DateTime } = require('luxon');
+const fs = require('fs');
 
 async function generateUniqueSlug(title) {
     const baseSlug = slugify(title, {
@@ -43,6 +44,8 @@ const createBlog = async (req) => {
                     content: '',
                     slug: uniqueSlug,
                     url_image: fullpathConverted,
+                    created_at: new Date(),
+                    updated_at: new Date(),
                 },
             });
 
@@ -135,6 +138,17 @@ async function updateBlog(req) {
                     })),
                 });
                 if (updateBlogWithoutThumbnail && deleteOldCategory && isUpdateCategory) {
+                    const oldImageSources = await helper.FileHelper.extractImageSources(isBlogExist.content);
+                    const newImageSources = await helper.FileHelper.extractImageSources(content);
+                    await oldImageSources.forEach((oldSrc) => {
+                        if (!newImageSources.includes(oldSrc)) {
+                            const fullPath = helper.ConvertHelper.deConvertFilePath(oldSrc); // Sử dụng hàm chuyển đổi đường dẫn
+                            if (fullPath && fs.existsSync(fullPath)) {
+                                helper.FileHelper.destroyedFileIfFailed(fullPath); // Sử dụng hàm xóa file
+                                console.log(`Deleted: ${fullPath}`);
+                            }
+                        }
+                    });
                     return new ResponseSuccess(200, 'Cập nhật dữ liệu thành công', true);
                 } else {
                     return new ResponseError(500, 'Lỗi máy chủ nội bộ', false);
@@ -166,6 +180,17 @@ async function updateBlog(req) {
                 });
                 if (updateBlogWithThumbnail && deleteOldCategory && isUpdateCategory) {
                     await helper.FileHelper.destroyedFileIfFailed(oldThumbnail);
+                    const oldImageSources = await helper.FileHelper.extractImageSources(isBlogExist.content);
+                    const newImageSources = await helper.FileHelper.extractImageSources(content);
+                    await oldImageSources.forEach((oldSrc) => {
+                        if (!newImageSources.includes(oldSrc)) {
+                            const fullPath = helper.ConvertHelper.deConvertFilePath(oldSrc); // Sử dụng hàm chuyển đổi đường dẫn
+                            if (fullPath && fs.existsSync(fullPath)) {
+                                helper.FileHelper.destroyedFileIfFailed(fullPath); // Sử dụng hàm xóa file
+                                console.log(`Deleted: ${fullPath}`);
+                            }
+                        }
+                    });
                     return new ResponseSuccess(200, 'Cập nhật blog thành công', true);
                 } else {
                     await helper.FileHelper.destroyedFileIfFailed(file.path);
@@ -219,6 +244,9 @@ async function deleteBlog(req) {
             },
         });
         if (isBlogExist) {
+            const fullPathThumbnail = helper.ConvertHelper.deConvertFilePath(isBlogExist.url_image); // Sử dụng hàm chuyển đổi đường dẫn
+            helper.FileHelper.destroyedFileIfFailed(fullPathThumbnail); // Sử dụng hàm xóa file
+
             const isDeleteBlog = await configs.db.blog.update({
                 where: {
                     id: isBlogExist.id,
@@ -227,8 +255,17 @@ async function deleteBlog(req) {
                     is_deleted: true,
                 },
             });
-            if (isDeleteBlog) return new ResponseSuccess(200, 'Xóa blog thành công', 200);
-            else return new ResponseError(500, 'Lỗi máy chủ nội bộ', false);
+            if (isDeleteBlog) {
+                const oldImageSources = await helper.FileHelper.extractImageSources(isBlogExist.content);
+                await oldImageSources.forEach((oldSrc) => {
+                    const fullPath = helper.ConvertHelper.deConvertFilePath(oldSrc); // Sử dụng hàm chuyển đổi đường dẫn
+                    if (fullPath && fs.existsSync(fullPath)) {
+                        helper.FileHelper.destroyedFileIfFailed(fullPath); // Sử dụng hàm xóa file
+                        console.log(`Deleted: ${fullPath}`);
+                    }
+                });
+                return new ResponseSuccess(200, 'Xóa blog thành công', 200);
+            } else return new ResponseError(500, 'Lỗi máy chủ nội bộ', false);
         } else return new ResponseError(404, 'Không tìm thấy blog cần xóa', false);
     } catch (error) {
         console.log(error);
@@ -588,7 +625,7 @@ async function createCommentBlog(req, io) {
                         const req = { params: { comment_id } }; // Tạo req với params chứa comment_id
                         const newReply = await getCommentBlogById(req);
                         io.emit('new-reply', newReply.data);
-                        return new ResponseSuccess(200, 'Gửi bình luận thành công',true, newReply.data);
+                        return new ResponseSuccess(200, 'Gửi bình luận thành công', true, newReply.data);
                     } else {
                         return new ResponseError(400, 'Có lỗi trong quá trình gửi dữ liệu', false);
                     }
@@ -676,6 +713,17 @@ async function updateCommentBlog(req, io) {
                 },
             });
             if (isUpdateComment) {
+                const oldImageSources = await helper.FileHelper.extractImageSources(isExistComment.content);
+                const newImageSources = await helper.FileHelper.extractImageSources(content);
+                await oldImageSources.forEach((oldSrc) => {
+                    if (!newImageSources.includes(oldSrc)) {
+                        const fullPath = helper.ConvertHelper.deConvertFilePath(oldSrc); // Sử dụng hàm chuyển đổi đường dẫn
+                        if (fullPath && fs.existsSync(fullPath)) {
+                            helper.FileHelper.destroyedFileIfFailed(fullPath); // Sử dụng hàm xóa file
+                            console.log(`Deleted: ${fullPath}`);
+                        }
+                    }
+                });
                 const comment_id = isUpdateComment.id; // Lấy ID bình luận vừa tạo
                 const req = { params: { comment_id } }; // Tạo req với params chứa comment_id
                 const updateComment = await getCommentBlogById(req);
@@ -708,6 +756,14 @@ async function deleteCommentBlog(req, io) {
                 },
             });
             if (deleteComment) {
+                const oldImageSources = helper.FileHelper.extractImageSources(isExistComment.content);
+                oldImageSources.forEach((oldSrc) => {
+                    const fullPath = helper.ConvertHelper.deConvertFilePath(oldSrc); // Sử dụng hàm chuyển đổi đường dẫn
+                    if (fullPath && fs.existsSync(fullPath)) {
+                        helper.FileHelper.destroyedFileIfFailed(fullPath); // Sử dụng hàm xóa file
+                        console.log(`Deleted: ${fullPath}`);
+                    }
+                });
                 // const comment_id = deleteComment.id; // Lấy ID bình luận vừa tạo
                 // const req = { params: { comment_id } }; // Tạo req với params chứa comment_id
                 // const deleteComment = await getCommentBlogById(req);
@@ -803,7 +859,7 @@ async function handleReactionCommentBlog(req, io) {
                             dislike: dislikeCount,
                         };
                         if (isCommentExist.parent_id !== null) {
-                            data.parent_id = isCommentExist.parent_id;  // Thêm thuộc tính parent_id nếu khác null
+                            data.parent_id = isCommentExist.parent_id; // Thêm thuộc tính parent_id nếu khác null
                         }
                         io.emit('update-reaction-comment', data);
                         return new ResponseSuccess(200, 'Thành công', true, data);
@@ -822,7 +878,7 @@ async function handleReactionCommentBlog(req, io) {
                         dislike: dislikeCount,
                     };
                     if (isCommentExist.parent_id !== null) {
-                        data.parent_id = isCommentExist.parent_id;  // Thêm thuộc tính parent_id nếu khác null
+                        data.parent_id = isCommentExist.parent_id; // Thêm thuộc tính parent_id nếu khác null
                     }
                     io.emit('create-reaction-comment', data);
                     return new ResponseSuccess(200, 'Thành công', true, data);

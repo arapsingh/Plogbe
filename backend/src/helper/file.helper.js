@@ -141,9 +141,19 @@ const destroyedFileIfFailed = async (filePath) => {
         return false;
     }
 };
+const extractImageSources = (content) => {
+    const regex = /<img[^>]+src="([^">]+)"/g;
+    let matches;
+    const imageSources = [];
+    while ((matches = regex.exec(content)) !== null) {
+        imageSources.push(matches[1]); // Lấy src
+    }
+    return imageSources;
+};
 const FileHelper = {
     createFileM3U8AndTS,
     destroyedVideoIfFailed,
     destroyedFileIfFailed,
+    extractImageSources,
 };
 module.exports = FileHelper;

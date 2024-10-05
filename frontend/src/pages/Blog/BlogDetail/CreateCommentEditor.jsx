@@ -39,7 +39,7 @@ const CreateCommentEditor = ({ blog, comment, setIsOpenReplyEditor, parentCommen
             let contentData;
             if (commentRef.current) {
                 if (hasImage) {
-                    const result = await commentRef.current.handleSaveImageComment(true);
+                    const result = await commentRef.current.handleSaveImageComment('', true);
                     if (result.success) {
                         contentData = result.data;
                     } else {
