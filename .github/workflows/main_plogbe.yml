@@ -22,20 +22,21 @@ jobs:
           node-version: '20.x'
       - name: 'Set environment variables'
         run: |
-          az webapp config appsettings set --name plogbe --resource-group HuuPhuoc --settings \
-            DATABASE_URL=${{ secrets.DATABASE_URL }} \
-            DOMAIN_NAME=${{ secrets.DOMAIN_NAME }} \
-            BACKEND_DOMAIN_NAME=${{ secrets.BACKEND_DOMAIN_NAME }} \
-            TOKEN_ACCESS_EXPIRED_TIME=${{ secrets.TOKEN_ACCESS_EXPIRED_TIME }} \
-            TOKEN_REFRESH_EXPIRED_TIME=${{ secrets.TOKEN_REFRESH_EXPIRED_TIME }} \
-            PUBLIC_URL=${{ secrets.PUBLIC_URL }} \
-            PUBLIC_API_URL=${{ secrets.PUBLIC_API_URL }} \
-            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
-            HASH_SALT=${{ secrets.HASH_SALT }} \
-            EMAIL_SERVER=${{ secrets.EMAIL_SERVER }} \
-            PASSWORD_SERVER=${{ secrets.PASSWORD_SERVER }} \
-            PAGE_SIZE=${{ secrets.PAGE_SIZE }} \
-            TZ=${{ secrets.TZ }}
+          az webapp config appsettings set --name plogbe --resource-group HuuPhuoc --settings `
+          DATABASE_URL=${{ secrets.DATABASE_URL }} `
+          DOMAIN_NAME=${{ secrets.DOMAIN_NAME }} `
+          BACKEND_DOMAIN_NAME=${{ secrets.BACKEND_DOMAIN_NAME }} `
+          TOKEN_ACCESS_EXPIRED_TIME=${{ secrets.TOKEN_ACCESS_EXPIRED_TIME }} `
+          TOKEN_REFRESH_EXPIRED_TIME=${{ secrets.TOKEN_REFRESH_EXPIRED_TIME }} `
+          PUBLIC_URL=${{ secrets.PUBLIC_URL }} `
+          PUBLIC_API_URL=${{ secrets.PUBLIC_API_URL }} `
+          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} `
+          HASH_SALT=${{ secrets.HASH_SALT }} `
+          EMAIL_SERVER=${{ secrets.EMAIL_SERVER }} `
+          PASSWORD_SERVER=${{ secrets.PASSWORD_SERVER }} `
+          PAGE_SIZE=${{ secrets.PAGE_SIZE }} `
+          TZ=${{ secrets.TZ }}
+
       - name: npm install, build, and test
         run: |
           cd backend
