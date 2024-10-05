@@ -86,8 +86,18 @@ jobs:
             PAGE_SIZE=${{ secrets.PAGE_SIZE }} \
             TZ=${{ secrets.TZ }}
       
-      - name: List files in the downloaded artifact
-        run: ls -la  # Kiểm tra xem thư mục có tồn tại không
+      - name: Extract downloaded artifact
+        run: |
+          unzip -o node-app.zip -d node-app 
+          
+      - name: List contents of the downloaded artifact
+        run: |
+          ls -la node-app.zip  
+          unzip -l node-app.zip  
+          
+      - name: List contents of node-app directory
+        run: |
+          ls -la node-app  
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
