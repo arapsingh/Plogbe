@@ -110,4 +110,4 @@ jobs:
         with:
           app-name: 'plogbe'
           slot-name: 'Production'
-          package: 'node-app'  # Đường dẫn đến artifact đã tải về
+          package: 'node-app/dist/index.js'  # Chỉ định đến file chính của ứng dụng
