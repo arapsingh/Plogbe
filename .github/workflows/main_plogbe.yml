@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./backend/dist # Chỉ upload thư mục dist chứa kết quả build
+          path: backend/dist # Chỉ upload thư mục dist chứa kết quả build
 
   deploy:
     runs-on: ubuntu-latest
@@ -81,4 +81,4 @@ jobs:
         with:
           app-name: 'plogbe'
           slot-name: 'Production'
-          package: ./backend/dist # Triển khai thư mục dist đã build
+          package: backend/dist # Triển khai thư mục dist đã build
