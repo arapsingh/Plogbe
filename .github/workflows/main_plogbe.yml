@@ -103,7 +103,7 @@ jobs:
     
       - name: List contents of node-app directory
         run: |
-            ls -la node-app /dist
+            ls -la node-app/dist
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
