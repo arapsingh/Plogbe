@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: dist # Chỉ upload thư mục dist chứa kết quả build
+          path: ./dist # Chỉ upload thư mục dist chứa kết quả build
 
   deploy:
     runs-on: ubuntu-latest
