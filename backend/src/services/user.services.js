@@ -1,5 +1,5 @@
 const { ResponseSuccess, ResponseError } = require('../common/response');
-const bcrpyt = require('bcrypt');
+const bcrpyt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JsonWebTokenError, TokenExpiredError, NotBeforeError } = require('jsonwebtoken');
 const configs = require('../configs');

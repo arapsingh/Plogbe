@@ -1,0 +1,15 @@
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+[build]
+  publish = "dist"
+  functions = "netlify/functions"
+
+[[plugins]]
+  package = "netlify-plugin-ffmpeg"
