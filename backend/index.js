@@ -62,3 +62,5 @@ const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
     console.log('server is running on port:');
 });
+const handler = app; // Hoặc bạn có thể tạo một hàm riêng cho việc này
+module.exports.handler = handler;

@@ -1,5 +1,5 @@
 const configs = require(".");
-const bcrpyt = require("bcrypt");
+const bcrpyt = require("bcryptjs");
 const seed = async () => {
     const hashedPassword = await bcrpyt.hash("2011069020110701", configs.general.HASH_SALT);
     const createAdmin = await configs.db.user.create({
