@@ -1,5 +1,0 @@
-[[redirects]]
-  from = "http://plogbe.ap-1.evennode.com/api/*"
-  to = "http://plogbe.ap-1.evennode.com/api/:splat"
-  status = 200
-  force = true
