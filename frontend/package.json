@@ -37,11 +37,15 @@
         "web-vitals": "^2.1.4",
         "yup": "^1.2.0"
     },
+    "homepage": "https://arapsingh.github.io/Plogbe/",
+
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "predeploy": "npm run build",
+        "deploy": "gh-pages -d build"
     },
     "eslintConfig": {
         "extends": [
@@ -73,6 +77,7 @@
         "eslint-plugin-import": "^2.30.0",
         "eslint-plugin-prettier": "^5.2.1",
         "eslint-plugin-react": "^7.36.0",
+        "gh-pages": "^6.1.1",
         "globals": "^15.9.0",
         "js-cookie": "^3.0.5",
         "prettier": "^3.3.3",
