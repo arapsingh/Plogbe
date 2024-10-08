@@ -104,12 +104,12 @@ const PopUpAddBlogCard = ({ handleCancelButtonClicked }) => {
                             </Form.Item>
                             <Form.Item>
                                 <div className="flex items-center justify-center">
-                                    <Image
+                                    <img
                                         width={400}
                                         height={400}
                                         src={imagePreview}
-                                        preview={false}
-                                        fallback=""
+                                        // preview={false}
+                                        // fallback=""
                                         className="avatar-image"
                                     />
                                 </div>

@@ -110,12 +110,12 @@ const PopupEditCategory = ({ handleCancelButtonClicked, category }) => {
                             </Form.Item>
                             <Form.Item>
                                 <div className="flex items-center justify-center">
-                                    <Image
+                                    <img
                                         width={150}
                                         height={150}
                                         src={imagePreview ? imagePreview : Plog}
-                                        preview={false}
-                                        fallback=""
+                                        // preview={false}
+                                        // fallback=""
                                         // className="avatar-image"
                                     />
                                 </div>
