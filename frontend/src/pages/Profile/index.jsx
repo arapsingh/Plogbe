@@ -9,7 +9,6 @@ import { userActions } from '../../redux/slices/index.js';
 import { useEffect, useState } from 'react';
 import { DefaultAvatar } from '../../assets/images/index.js';
 import toast from 'react-hot-toast';
-import { fetchWithHeaders } from '../../utils/helper.js';
 const Profile = () => {
     const isLoading = useAppSelector((state) => state.userSlice.isGetLoading);
     const getProfile = useAppSelector((state) => state.userSlice.user);
@@ -87,24 +86,15 @@ const Profile = () => {
     const [imagePreview, setImagePreview] = useState('');
     // Cập nhật URL tạm thời cho ảnh đã chọn
     useEffect(() => {
-        const loadImagePreview = async () => {
-            if (selectedFile) {
-                const objectUrl = URL.createObjectURL(selectedFile);
-                setImagePreview(objectUrl);
+        if (selectedFile) {
+            const objectUrl = URL.createObjectURL(selectedFile);
+            setImagePreview(objectUrl);
 
-                // Giải phóng URL khi component bị unmount
-                return () => URL.revokeObjectURL(objectUrl);
-            } else {
-                const avatarUrl = getProfile?.url_avatar;
-                if (avatarUrl) {
-                    const imgUrl = await fetchWithHeaders(avatarUrl); // Gọi hàm với avatarUrl
-                    setImagePreview(imgUrl || DefaultAvatar);
-                } else {
-                    setImagePreview(DefaultAvatar); // Sử dụng avatar mặc định nếu không có giá trị
-                }
-            }
-        };
-        loadImagePreview();
+            // Giải phóng URL khi component bị unmount
+            return () => URL.revokeObjectURL(objectUrl);
+        } else {
+            setImagePreview(getProfile?.url_avatar || DefaultAvatar);
+        }
     }, [selectedFile, getProfile?.url_avatar]);
     return (
         <>
@@ -166,7 +156,7 @@ const Profile = () => {
                                     </div>
                                 </div>
                                 <div className="mb-2">
-                                    <Form.Item label="Email" name="email">
+                                    <Form.Item label="Email" name="email" >
                                         <Input disabled />
                                     </Form.Item>
                                 </div>

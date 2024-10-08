@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRightOutlined, DownOutlined, UpOutlined, EyeOutlined } from '@ant-design/icons';
 import { Plog } from '../assets/images/index.js';
-import { convertDateFormat, fetchWithHeaders } from '../utils/helper.js';
+import { convertDateFormat } from '../utils/helper.js';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useAppSelector } from '../hooks/hooks.ts'; 
@@ -23,7 +23,7 @@ const BlogCardLong = (props) => {
                 onMouseLeave={() => setHovered(false)}
             >
                 <img
-                    src={fetchWithHeaders(props.blog.url_image)}
+                    src={props.blog.url_image}
                     alt={props.blog.title}
                     className="w-[200px] h-auto bg-black object-cover"
                 />
@@ -36,7 +36,7 @@ const BlogCardLong = (props) => {
 
                     <div className="flex gap-2 items-center">
                         <img
-                            src={fetchWithHeaders(props.author.url_avatar) || Plog}
+                            src={props.author.url_avatar || Plog}
                             alt="avt-admin"
                             className="rounded-full w-10 h-10 border border-gray-400"
                         />
