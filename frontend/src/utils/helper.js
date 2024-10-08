@@ -40,3 +40,30 @@ export const convertDateTimeFormat = (inputDate) => {
 
     return formattedDateTime;
 };
+export const fetchWithHeaders = async (avatarUrl, customHeaders = {}) => {
+    const CORS_ANYWHERE = process.env.CORS_ANYWHERE; // Lấy biến môi trường
+    const fullUrl = `${CORS_ANYWHERE}/${avatarUrl}`; // Kết hợp CORS với URL
+
+    const headers = {
+        'X-Requested-With': 'XMLHttpRequest', // Header chung
+        ...customHeaders, // Kết hợp với các header tùy chỉnh nếu có
+    };
+
+    try {
+        const response = await fetch(fullUrl, {
+            method: 'GET',
+            headers: headers,
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return URL.createObjectURL(await response.blob()); // Trả về object URL nếu thành công
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error; // Ném lỗi ra ngoài để xử lý sau
+    }
+};
+
+
