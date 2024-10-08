@@ -9,6 +9,8 @@ import { userActions } from '../../redux/slices/index.js';
 import { useEffect, useState } from 'react';
 import { DefaultAvatar } from '../../assets/images/index.js';
 import toast from 'react-hot-toast';
+import axios from 'axios';
+
 const Profile = () => {
     const isLoading = useAppSelector((state) => state.userSlice.isGetLoading);
     const getProfile = useAppSelector((state) => state.userSlice.user);
@@ -108,7 +110,17 @@ const Profile = () => {
                             <img
                                 width={400}
                                 height={400}
-                                src={`https://cors-anywhere.herokuapp.com/${imagePreview}`} // Sử dụng URL mặc định nếu avatarUrl không có
+                                src={axios
+                                    .get(`https://cors-anywhere.herokuapp.com/${imagePreview}`, {
+                                        headers: {
+                                            'x-requested-with': 'XMLHttpRequest',
+                                        },
+                                    })
+                                    .then((response) => {
+                                        console.log(response.data);
+                                        setImagePreview(response.data);
+                                        return imagePreview;
+                                    })} // Sử dụng URL mặc định nếu avatarUrl không có
                                 // preview={false}
                                 // fallback="https://via.placeholder.com/200" // Hình ảnh thay thế nếu URL không hợp lệ
                                 className="avatar-image" // Thêm lớp CSS vào ảnh
@@ -157,7 +169,7 @@ const Profile = () => {
                                     </div>
                                 </div>
                                 <div className="mb-2">
-                                    <Form.Item label="Email" name="email" >
+                                    <Form.Item label="Email" name="email">
                                         <Input disabled />
                                     </Form.Item>
                                 </div>
