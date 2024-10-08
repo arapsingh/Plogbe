@@ -42,7 +42,9 @@ export const convertDateTimeFormat = (inputDate) => {
 };
 export const fetchWithHeaders = async (avatarUrl, customHeaders = {}) => {
     const CORS_ANYWHERE = process.env.CORS_ANYWHERE; // Lấy biến môi trường
-    const fullUrl = CORS_ANYWHERE + { avatarUrl }; // Kết hợp CORS với URL
+    console.log("CORS_ANYWHERE:", process.env.CORS_ANYWHERE);
+
+    const fullUrl = `${CORS_ANYWHERE}/${avatarUrl}`; // Kết hợp CORS với URL
 
     const headers = {
         'X-Requested-With': 'XMLHttpRequest', // Header chung
@@ -65,3 +67,5 @@ export const fetchWithHeaders = async (avatarUrl, customHeaders = {}) => {
         throw error; // Ném lỗi ra ngoài để xử lý sau
     }
 };
+
+
