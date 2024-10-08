@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import UserDropDown from '../UserDropDown.jsx';
 import PropTypes from 'prop-types'; // Import PropTypes
 import { Toaster } from 'react-hot-toast';
+import { fetchWithHeaders } from '../../utils/helper.js';
 const Header = ({ isLogin }) => {
     const navigate = useNavigate();
 
@@ -17,7 +18,7 @@ const Header = ({ isLogin }) => {
         navigate('/sign-up');
     };
 
-    const avatar = useAppSelector((state) => state.userSlice.user.url_avatar);
+    const avatar = fetchWithHeaders(useAppSelector((state) => state.userSlice.user.url_avatar));
 
     return (
         <header className="header flex items-center justify-between p-4 bg-lightorange">
@@ -36,7 +37,7 @@ const Header = ({ isLogin }) => {
             {/* Phần tử bên phải: Avatar hoặc nút đăng nhập */}
             <div className="user-actions flex items-center">
                 {isLogin ? (
-                    <UserDropDown avatar={avatar} />
+                    <UserDropDown avatar={avatar ? avatar : DefaultAvatar} />
                 ) : (
                     <div className="auth-buttons flex space-x-4">
                         <button
