@@ -84,6 +84,7 @@ const Profile = () => {
         }
     };
     const [imagePreview, setImagePreview] = useState('');
+
     // Cập nhật URL tạm thời cho ảnh đã chọn
     useEffect(() => {
         if (selectedFile) {
@@ -104,12 +105,12 @@ const Profile = () => {
                 <div className="container mx-auto">
                     <div className="flex items-center justify-center mt-[100px] py-10">
                         <div className="avatar-display">
-                            <Image
+                            <img
                                 width={400}
                                 height={400}
                                 src={imagePreview} // Sử dụng URL mặc định nếu avatarUrl không có
-                                preview={false}
-                                fallback="https://via.placeholder.com/200" // Hình ảnh thay thế nếu URL không hợp lệ
+                                // preview={false}
+                                // fallback="https://via.placeholder.com/200" // Hình ảnh thay thế nếu URL không hợp lệ
                                 className="avatar-image" // Thêm lớp CSS vào ảnh
                             />
                             {/* Avatar input */}
