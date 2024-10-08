@@ -109,17 +109,24 @@ const Profile = () => {
                         headers: {
                             'x-requested-with': 'XMLHttpRequest',
                         },
+                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
                     });
-                    console.log(response.data); // Log dữ liệu phản hồi
-                    setImageUrl(response.data); // Cập nhật trạng thái với URL hình ảnh
+    
+                    // Tạo một blob từ dữ liệu nhị phân
+                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
+                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
+    
+                    console.log(imageUrl); // Log URL để kiểm tra
+                    setImageUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
                 }
             } catch (error) {
                 console.error('Error fetching the image:', error); // Xử lý lỗi
             }
         };
-
+    
         fetchImage(); // Gọi hàm lấy hình ảnh
     }, [imagePreview]); // Chạy effect khi imagePreview thay đổi
+    
     return (
         <>
             {isLoading ? (
