@@ -95,7 +95,13 @@ const Profile = () => {
                 // Giải phóng URL khi component bị unmount
                 return () => URL.revokeObjectURL(objectUrl);
             } else {
-                setImagePreview((await fetchWithHeaders(getProfile?.url_avatar)) || DefaultAvatar);
+                const avatarUrl = getProfile?.url_avatar;
+                if (avatarUrl) {
+                    const imgUrl = await fetchWithHeaders(avatarUrl); // Gọi hàm với avatarUrl
+                    setImagePreview(imgUrl || DefaultAvatar);
+                } else {
+                    setImagePreview(DefaultAvatar); // Sử dụng avatar mặc định nếu không có giá trị
+                }
             }
         };
         loadImagePreview();
