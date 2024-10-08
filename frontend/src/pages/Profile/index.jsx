@@ -82,6 +82,7 @@ const Profile = () => {
 
             // Lưu trữ file được chọn trong state hoặc tiếp tục xử lý
             setSelectedFile(selectedFile);
+            setImageUrl('');
         }
     };
     const [imagePreview, setImagePreview] = useState('');
