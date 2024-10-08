@@ -15,7 +15,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: process.env.DOMAIN_NAME || 'http://localhost:3000', // Bạn có thể điều chỉnh origin
-        methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+        methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
         credentials: true,
     },
 });
