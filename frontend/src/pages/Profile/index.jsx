@@ -99,6 +99,27 @@ const Profile = () => {
             setImagePreview(getProfile?.url_avatar || DefaultAvatar);
         }
     }, [selectedFile, getProfile?.url_avatar]);
+    const [imageUrl, setImageUrl] = useState(''); // Trạng thái để lưu URL hình ảnh
+
+    useEffect(() => {
+        const fetchImage = async () => {
+            try {
+                if (imagePreview) {
+                    const response = await axios.get(`https://cors-pass.onrender.com/${imagePreview}`, {
+                        headers: {
+                            'x-requested-with': 'XMLHttpRequest',
+                        },
+                    });
+                    console.log(response.data); // Log dữ liệu phản hồi
+                    setImageUrl(response.data); // Cập nhật trạng thái với URL hình ảnh
+                }
+            } catch (error) {
+                console.error('Error fetching the image:', error); // Xử lý lỗi
+            }
+        };
+
+        fetchImage(); // Gọi hàm lấy hình ảnh
+    }, [imagePreview]); // Chạy effect khi imagePreview thay đổi
     return (
         <>
             {isLoading ? (
@@ -110,17 +131,7 @@ const Profile = () => {
                             <img
                                 width={400}
                                 height={400}
-                                src={axios
-                                    .get(`https://cors-anywhere.herokuapp.com/${imagePreview}`, {
-                                        headers: {
-                                            'x-requested-with': 'XMLHttpRequest',
-                                        },
-                                    })
-                                    .then((response) => {
-                                        console.log(response.data);
-                                        setImagePreview(response.data);
-                                        return imagePreview;
-                                    })} // Sử dụng URL mặc định nếu avatarUrl không có
+                                src={imageUrl} // Sử dụng URL mặc định nếu avatarUrl không có
                                 // preview={false}
                                 // fallback="https://via.placeholder.com/200" // Hình ảnh thay thế nếu URL không hợp lệ
                                 className="avatar-image" // Thêm lớp CSS vào ảnh
