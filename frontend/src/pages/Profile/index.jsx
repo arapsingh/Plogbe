@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react';
 import { DefaultAvatar } from '../../assets/images/index.js';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-
 const Profile = () => {
     const isLoading = useAppSelector((state) => state.userSlice.isGetLoading);
     const getProfile = useAppSelector((state) => state.userSlice.user);
@@ -86,7 +85,6 @@ const Profile = () => {
         }
     };
     const [imagePreview, setImagePreview] = useState('');
-    const [imageUrl, setImageUrl] = useState(''); // Trạng thái để lưu URL hình ảnh
 
     // Cập nhật URL tạm thời cho ảnh đã chọn
     useEffect(() => {
@@ -100,8 +98,8 @@ const Profile = () => {
             setImagePreview(getProfile?.url_avatar || DefaultAvatar);
         }
     }, [selectedFile, getProfile?.url_avatar]);
+    const [imageUrl, setImageUrl] = useState(''); // Trạng thái để lưu URL hình ảnh
 
-    // useEffect để lấy hình ảnh từ API
     useEffect(() => {
         const fetchImage = async () => {
             try {
@@ -112,11 +110,11 @@ const Profile = () => {
                         },
                         responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
                     });
-
+    
                     // Tạo một blob từ dữ liệu nhị phân
                     const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
                     const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
-
+    
                     console.log(imageUrl); // Log URL để kiểm tra
                     setImageUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
                 }
@@ -124,10 +122,11 @@ const Profile = () => {
                 console.error('Error fetching the image:', error); // Xử lý lỗi
             }
         };
-
+    
         fetchImage(); // Gọi hàm lấy hình ảnh
     }, [imagePreview]); // Chạy effect khi imagePreview thay đổi
     
+
     return (
         <>
             {isLoading ? (
@@ -139,7 +138,7 @@ const Profile = () => {
                             <img
                                 width={400}
                                 height={400}
-                                src={imageUrl || imagePreview} // Sử dụng URL mặc định nếu avatarUrl không có
+                                src={imagePreview ? imagePreview : imageUrl} // Sử dụng URL mặc định nếu avatarUrl không có
                                 // preview={false}
                                 // fallback="https://via.placeholder.com/200" // Hình ảnh thay thế nếu URL không hợp lệ
                                 className="avatar-image" // Thêm lớp CSS vào ảnh
