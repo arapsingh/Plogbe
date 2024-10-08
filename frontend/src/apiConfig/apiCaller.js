@@ -3,9 +3,10 @@ import Cookies from 'js-cookie';
 // const constants = require('../constants');
 import { userApis } from '../api';
 import { io } from 'socket.io-client'; // Import socket.io-client
+const corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/'; // Use your own CORS Anywhere instance if possible
 
 const axiosPublic = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001',
+    baseURL: corsAnywhereUrl + (process.env.REACT_APP_API_URL || 'http://localhost:3001'),
 });
 
 const axiosInstance = axios.create();
@@ -59,6 +60,7 @@ const apiCaller = (method, path, data) => {
         headers: {
             'Access-Control-Allow-Credentials': true,
             'Access-Control-Allow-Origin': '*',
+            'X-Requested-With': 'XMLHttpRequest', // Thêm header này
             rftoken: `rfToken ${refreshToken}`,
         },
         url: `/api/${path}`,
@@ -72,6 +74,7 @@ const apiCallerVnpay = (method, path, data) => {
         headers: {
             'Access-Control-Allow-Credentials': true,
             'Access-Control-Allow-Origin': '*',
+            'X-Requested-With': 'XMLHttpRequest', // Thêm header này
             // "Origin:": "https://sandbox.vnpayment.vn",
             rftoken: `rfToken ${refreshToken}`,
         },
