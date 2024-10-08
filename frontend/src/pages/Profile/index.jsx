@@ -97,39 +97,6 @@ const Profile = () => {
             setImagePreview(getProfile?.url_avatar || DefaultAvatar);
         }
     }, [selectedFile, getProfile?.url_avatar]);
-    useEffect(() => {
-        const fetchImage = async () => {
-            try {
-                if (getProfile?.url_avatar) {
-                    const response = await fetch(getProfile.url_avatar, {
-                        headers: {
-                            'x-request-with': 'your-header-value',
-                        },
-                    });
-
-                    if (response.ok) {
-                        const blob = await response.blob();
-                        const objectUrl = URL.createObjectURL(blob);
-                        setImagePreview(objectUrl);
-                    } else {
-                        console.error('Failed to fetch image:', response.status);
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching image:', error);
-            }
-        };
-
-        fetchImage();
-
-        return () => {
-            // Clean up the object URL when the component unmounts
-            if (imagePreview) {
-                URL.revokeObjectURL(imagePreview);
-            }
-        };
-    }, [getProfile?.url_avatar]);
-
     return (
         <>
             {isLoading ? (
@@ -141,7 +108,7 @@ const Profile = () => {
                             <img
                                 width={400}
                                 height={400}
-                                src={imagePreview} // Sử dụng URL mặc định nếu avatarUrl không có
+                                src={`https://cors-anywhere.herokuapp.com/${imagePreview}`} // Sử dụng URL mặc định nếu avatarUrl không có
                                 // preview={false}
                                 // fallback="https://via.placeholder.com/200" // Hình ảnh thay thế nếu URL không hợp lệ
                                 className="avatar-image" // Thêm lớp CSS vào ảnh
