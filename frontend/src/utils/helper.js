@@ -1,4 +1,3 @@
-require('dotenv').config();
 export const previewImage = (image, imageRef, imageSource) => {
     if (image && image.type.includes('image/')) {
         var reader = new FileReader();
