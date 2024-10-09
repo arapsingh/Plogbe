@@ -9,6 +9,7 @@ import { Plog } from '../../../assets/images';
 import { categoryActions } from '../../../redux/slices';
 import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 const PopupEditCategory = ({ handleCancelButtonClicked, category }) => {
     const isGetLoading = useAppSelector((state) => state.categorySlice.isGetLoading);
     const isLoading = useAppSelector((state) => state.categorySlice.isLoading);
@@ -54,6 +55,7 @@ const PopupEditCategory = ({ handleCancelButtonClicked, category }) => {
         try {
             await editCategoryValidationSchema.validateSyncAt('category_image', { category_image: file });
             setSelectedFile(file);
+            setImageUrl('');
             const objectUrl = URL.createObjectURL(file);
             setImagePreview(objectUrl);
             // setUploadError(''); // Clear any existing error
@@ -64,9 +66,29 @@ const PopupEditCategory = ({ handleCancelButtonClicked, category }) => {
             onError(error);
         }
     };
+    const [imageUrl, setImageUrl] = useState('');
     useEffect(() => {
         dispatch(categoryActions.getCategory(category.category_id)).then((response) => {
             if (response.payload.status_code == 200) {
+                // ham nay phuc vu cho viec chuyen http thanh https + blob de trinh chieu img
+                const changetoBlob = async () => {
+                    const result = await axios.get(
+                        `https://cors-pass.onrender.com/${response.payload.data.url_image}`,
+                        {
+                            headers: {
+                                'x-requested-with': 'XMLHttpRequest',
+                            },
+                            responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
+                        }
+                    );
+                    // Tạo một blob từ dữ liệu nhị phân
+                    const blob = new Blob([result.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
+                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
+
+                    console.log(imageUrl); // Log URL để kiểm tra
+                    setImageUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
+                }; /////
+                changetoBlob();
                 const imageFile = response.payload.data.url_image
                     ? {
                           url: response.payload.data.url_image,
@@ -113,7 +135,7 @@ const PopupEditCategory = ({ handleCancelButtonClicked, category }) => {
                                     <img
                                         width={150}
                                         height={150}
-                                        src={imagePreview ? imagePreview : Plog}
+                                        src={imageUrl ? imageUrl : imagePreview ? imagePreview : Plog}
                                         // preview={false}
                                         // fallback=""
                                         // className="avatar-image"

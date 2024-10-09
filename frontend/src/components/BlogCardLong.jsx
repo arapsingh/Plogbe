@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRightOutlined, DownOutlined, UpOutlined, EyeOutlined } from '@ant-design/icons';
 import { Plog } from '../assets/images/index.js';
 import { convertDateFormat } from '../utils/helper.js';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useAppSelector } from '../hooks/hooks.ts'; 
-
+import axios from 'axios';
 const BlogCardLong = (props) => {
     const [hovered, setHovered] = useState(false);
 
@@ -14,7 +14,56 @@ const BlogCardLong = (props) => {
 
     // Check if the current user is the author of the blog
     const isAuthor = currentUser?.user_id === props.author.user_id;
+    const [imageUrl, setImageUrl] = useState('');
+    const [imageUrlAvatar, setImageUrlAvatar] = useState('');
+    useEffect(() => {
+        const fetchImage = async () => {
+            try {
+                if (props.blog.url_image) {
+                    const response = await axios.get(`https://cors-pass.onrender.com/${props.blog.url_image}`, {
+                        headers: {
+                            'x-requested-with': 'XMLHttpRequest',
+                        },
+                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
+                    });
 
+                    // Tạo một blob từ dữ liệu nhị phân
+                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
+                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
+
+                    console.log(imageUrl); // Log URL để kiểm tra
+                    setImageUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
+                }
+            } catch (error) {
+                console.error('Error fetching the image:', error); // Xử lý lỗi
+            }
+        };
+
+        fetchImage(); // Gọi hàm lấy hình ảnh
+        const fetchImageAvatar = async () => {
+            try {
+                if (props.blog.url_image) {
+                    const response = await axios.get(`https://cors-pass.onrender.com/${props.author.url_avatar}`, {
+                        headers: {
+                            'x-requested-with': 'XMLHttpRequest',
+                        },
+                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
+                    });
+
+                    // Tạo một blob từ dữ liệu nhị phân
+                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
+                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
+
+                    console.log(imageUrl); // Log URL để kiểm tra
+                    setImageUrlAvatar(imageUrl); // Cập nhật trạng thái với URL hình ảnh
+                }
+            } catch (error) {
+                console.error('Error fetching the image:', error); // Xử lý lỗi
+            }
+        };
+
+        fetchImageAvatar(); // Gọi hàm lấy hình ảnh
+    }, [props.blog.url_image, props.author.url_avatar]);
     return (
         <Link to={`${isAuthor ? `/my-blog/${props.blog.slug}` : `/blog/detail/${props.blog.slug}`}`}>
             <div
@@ -23,7 +72,7 @@ const BlogCardLong = (props) => {
                 onMouseLeave={() => setHovered(false)}
             >
                 <img
-                    src={props.blog.url_image}
+                    src={imageUrl}
                     alt={props.blog.title}
                     className="w-[200px] h-auto bg-black object-cover"
                 />
@@ -36,7 +85,7 @@ const BlogCardLong = (props) => {
 
                     <div className="flex gap-2 items-center">
                         <img
-                            src={props.author.url_avatar || Plog}
+                            src={imageUrlAvatar || Plog}
                             alt="avt-admin"
                             className="rounded-full w-10 h-10 border border-gray-400"
                         />
