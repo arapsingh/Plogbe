@@ -1,10 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppSelector } from '../../../hooks/hooks.ts';
 import { Plog } from '../../../assets/images';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 const CategoryCard = (props) => {
     const [hovered, setHovered] = useState(false);
+    const [imageUrl, setImageUrl] = useState('');
+    useEffect(() => {
+        const fetchImage = async () => {
+            try {
+                if (props.category.url_image) {
+                    const response = await axios.get(`https://cors-pass.onrender.com/${props.category.url_image}`, {
+                        headers: {
+                            'x-requested-with': 'XMLHttpRequest',
+                        },
+                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
+                    });
 
+                    // Tạo một blob từ dữ liệu nhị phân
+                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
+                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
+
+                    console.log(imageUrl); // Log URL để kiểm tra
+                    setImageUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
+                }
+            } catch (error) {
+                console.error('Error fetching the image:', error); // Xử lý lỗi
+            }
+        };
+
+        fetchImage(); // Gọi hàm lấy hình ảnh
+    }, [props.category.url_image]);
     return (
         <>
             <div
@@ -18,7 +44,7 @@ const CategoryCard = (props) => {
                             <img
                                 className="w-[130px] h-[130px] my-3 rounded-md border border-gray-400 "
                                 alt="category_image"
-                                src={props.category.url_image ? props.category.url_image : Plog}
+                                src={imageUrl ? imageUrl : Plog}
                             />
                         </div>
                         <div className="flex flex-col items-start">

@@ -14,6 +14,7 @@ const BlogCard = (props) => {
     // Check if the current user is the author of the blog
     const isAuthor = currentUser?.user_id === props.author.user_id;
     const [imageUrl, setImageUrl] = useState('');
+    const [imageUrlAvatar, setImageUrlAvatar] = useState('');
     useEffect(() => {
         const fetchImage = async () => {
             try {
@@ -38,7 +39,30 @@ const BlogCard = (props) => {
         };
 
         fetchImage(); // Gọi hàm lấy hình ảnh
-    }, [props.blog.url_image]); // Chạy effect khi imagePreview thay đổi
+        const fetchImageAvatar = async () => {
+            try {
+                if (props.blog.url_image) {
+                    const response = await axios.get(`https://cors-pass.onrender.com/${props.author.url_avatar}`, {
+                        headers: {
+                            'x-requested-with': 'XMLHttpRequest',
+                        },
+                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
+                    });
+
+                    // Tạo một blob từ dữ liệu nhị phân
+                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
+                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
+
+                    console.log(imageUrl); // Log URL để kiểm tra
+                    setImageUrlAvatar(imageUrl); // Cập nhật trạng thái với URL hình ảnh
+                }
+            } catch (error) {
+                console.error('Error fetching the image:', error); // Xử lý lỗi
+            }
+        };
+
+        fetchImageAvatar(); // Gọi hàm lấy hình ảnh
+    }, [props.blog.url_image, props.author.url_avatar]);
     return (
         <Link to={`${isAuthor ? `/my-blog/${props.blog.slug}` : `/blog/detail/${props.blog.slug}`}`}>
             <div
@@ -60,7 +84,7 @@ const BlogCard = (props) => {
                     <div className="flex flex-col items-start gap-2">
                         <div className="flex gap-2 items-center">
                             <img
-                                src={props.author.url_avatar || Plog}
+                                src={imageUrlAvatar || Plog}
                                 alt="avt-admin"
                                 className="rounded-full w-6 h-6 border border-gray-400"
                             />

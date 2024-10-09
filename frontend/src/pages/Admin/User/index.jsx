@@ -11,6 +11,7 @@ import Pagination from '../../../components/Pagination.jsx';
 import { DefaultAvatar } from '../../../assets/images/index.js';
 import PopupEditUser from './PopupEditUser.jsx';
 import ConfirmDialog from '../../../components/ConfirmDialog.jsx';
+import axios from 'axios';
 const User = () => {
     const isGetLoading = useAppSelector((state) => state.userSlice.isGetLoading);
     const isLoading = useAppSelector((state) => state.userSlice.isLoading);
@@ -87,13 +88,41 @@ const User = () => {
             title: 'Ảnh đại diện',
             dataIndex: 'avatar',
             key: 'avatar',
-            render: (url) => (
-                <img
-                    src={url ? url : DefaultAvatar}
-                    alt="avatar"
-                    style={{ width: '50px', height: '50px', borderRadius: '50%' }} // Bạn có thể điều chỉnh kích thước và kiểu dáng theo ý muốn
-                />
-            ),
+            render: (url) => {
+                const [imageUrl, setImageUrl] = useState('');
+
+                useEffect(() => {
+                    const fetchImage = async () => {
+                        try {
+                            if (url) {
+                                const response = await axios.get(`https://cors-pass.onrender.com/${url}`, {
+                                    headers: {
+                                        'x-requested-with': 'XMLHttpRequest',
+                                    },
+                                    responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
+                                });
+
+                                // Tạo một blob từ dữ liệu nhị phân
+                                const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
+                                const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
+
+                                setImageUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
+                            }
+                        } catch (error) {
+                            console.error('Error fetching the image:', error); // Xử lý lỗi
+                        }
+                    };
+
+                    fetchImage(); // Gọi hàm lấy hình ảnh
+                }, [url]);
+                return (
+                    <img
+                        src={imageUrl ? imageUrl : DefaultAvatar}
+                        alt="avatar"
+                        style={{ width: '50px', height: '50px', borderRadius: '50%' }} // Bạn có thể điều chỉnh kích thước và kiểu dáng theo ý muốn
+                    />
+                );
+            },
         },
         {
             title: 'Họ',
