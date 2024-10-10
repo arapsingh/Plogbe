@@ -201,7 +201,7 @@ const EditBlog = () => {
     useEffect(() => {
         const updateImageUrls = async () => {
             if (editorRef.current) {
-                const imgElements = editorRef.current.getElementsByTagName('img');
+                const imgElements = editorRef.current.getEditor().root.getElementsByTagName('img');
 
                 for (let img of imgElements) {
                     const originalUrl = img.src;
@@ -234,7 +234,7 @@ const EditBlog = () => {
         try {
             // Lấy lại các thẻ <img> từ nội dung
             if (editorRef.current) {
-                const imgElements = editorRef.current.getElementsByTagName('img');
+                const imgElements = editorRef.current.getEditor().root.getElementsByTagName('img');
 
                 for (let img of imgElements) {
                     const blobUrl = img.src;
@@ -250,7 +250,7 @@ const EditBlog = () => {
             }
 
             // Cập nhật lại nội dung sau khi xử lý ảnh
-            setUpdatedContent(editorRef.current.innerHTML);
+            setUpdatedContent(editorRef.current.getEditor().root.innerHTML);
             // const content = values.content;
             // if (content.length < 1) {
             //     toast.error('Content phải có nội dung');
