@@ -13,7 +13,7 @@ import TextEditorWithImage from '../../components/TextEditorWithImage.jsx';
 import Spin from '../../components/Spin.jsx';
 import toast from 'react-hot-toast';
 import ConfirmDialog from '../../components/ConfirmDialog.jsx';
-
+import axios from 'axios';
 const { Sider } = Layout;
 const { TabPane } = Tabs;
 
@@ -75,10 +75,12 @@ const EditBlog = () => {
     };
     const [imagePreview, setImagePreview] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
+    const [imageUrl, setImageUrl] = useState('');
     const customRequest = async ({ file, onSuccess, onError }) => {
         try {
             await editBlogValidationSchema.validateSyncAt('image_blog', { image_blog: file });
             setSelectedFile(file);
+            setImageUrl('');
             const objectUrl = URL.createObjectURL(file);
             console.log('obj:', objectUrl);
             setImagePreview(objectUrl);
@@ -97,6 +99,31 @@ const EditBlog = () => {
         };
     }, [imagePreview]);
 
+    useEffect(() => {
+        const fetchImage = async () => {
+            try {
+                if (blog.url_image) {
+                    const response = await axios.get(`https://cors-pass.onrender.com/${blog.url_image}`, {
+                        headers: {
+                            'x-requested-with': 'XMLHttpRequest',
+                        },
+                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
+                    });
+
+                    // Tạo một blob từ dữ liệu nhị phân
+                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
+                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
+
+                    console.log(imageUrl); // Log URL để kiểm tra
+                    setImageUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
+                }
+            } catch (error) {
+                console.error('Error fetching the image:', error); // Xử lý lỗi
+            }
+        };
+
+        fetchImage(); // Gọi hàm lấy hình ảnh
+    }, [blog.url_image]);
     const categories = useAppSelector((state) => state.categorySlice.categories);
     const blogCategories = useAppSelector((state) => state.blogSlice.blog.categories);
 
@@ -169,18 +196,64 @@ const EditBlog = () => {
     const editorRef = useRef(null);
     const [isSaveVisible, setIsSaveVisible] = useState(false);
     const [isDeleteVisible, setIsDeleteVisible] = useState(false);
+    const [updatedContent, setUpdatedContent] = useState(content);
+
+    useEffect(() => {
+        const updateImageUrls = async () => {
+            if (editorRef.current) {
+                const imgElements = editorRef.current.getElementsByTagName('img');
+
+                for (let img of imgElements) {
+                    const originalUrl = img.src;
+
+                    // Lưu trữ URL gốc vào thuộc tính data-original-url
+                    img.setAttribute('data-original-url', originalUrl);
+
+                    try {
+                        const response = await axios.get(`https://cors-pass.onrender.com/${originalUrl}`, {
+                            headers: {
+                                'x-requested-with': 'XMLHttpRequest',
+                            },
+                            responseType: 'arraybuffer',
+                        });
+
+                        const blob = new Blob([response.data], { type: 'image/png' });
+                        const secureImageUrl = URL.createObjectURL(blob);
+
+                        img.src = secureImageUrl; // Cập nhật URL thành blob URL
+                    } catch (error) {
+                        console.error('Error fetching the image:', error);
+                    }
+                }
+            }
+        };
+
+        updateImageUrls();
+    }, [blog.content]);
     const onFinish = async (values) => {
         try {
-            // const values = await form.validateFields(); // Get values from form
-            const content = values.content;
-            if(content.length<1)
-            {
-                toast.error('Content phải có nội dung');
-                return;
+            // Lấy lại các thẻ <img> từ nội dung
+            const imgElements = editorRef.current.getElementsByTagName('img');
+
+            for (let img of imgElements) {
+                const blobUrl = img.src;
+                const originalUrl = img.getAttribute('data-original-url');
+
+                // Nếu ảnh chưa thay đổi, đặt lại URL gốc
+                if (blobUrl.startsWith('blob:')) {
+                    img.src = originalUrl;
+                }
             }
-            const oldContent = blog.content;
+
+            // Cập nhật lại nội dung sau khi xử lý ảnh
+            setUpdatedContent(editorRef.current.innerHTML);
+            // const content = values.content;
+            // if (content.length < 1) {
+            //     toast.error('Content phải có nội dung');
+            //     return;
+            // }
             // Regular expression to check for <img> tags
-            const hasImage = /<img\s+[^>]*src="([^"]*)"[^>]*>/i.test(content);
+            const hasImage = /<img\s+[^>]*src="([^"]*)"[^>]*>/i.test(updatedContent);
             let contentData;
             if (editorRef.current) {
                 if (hasImage) {
@@ -191,7 +264,7 @@ const EditBlog = () => {
                         throw new Error('Lưu nội dung không thành công.');
                     }
                 } else {
-                    contentData = content; // Assign directly if no images
+                    contentData = updatedContent; // Assign directly if no images
                 }
             }
             const formData = new FormData();
@@ -308,7 +381,7 @@ const EditBlog = () => {
                                             <img
                                                 width={400}
                                                 height={400}
-                                                src={imagePreview}
+                                                src={imageUrl ? imageUrl : imagePreview}
                                                 // preview={false}
                                                 // fallback=""
                                                 className="avatar-image"

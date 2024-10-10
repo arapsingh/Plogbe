@@ -117,7 +117,7 @@ const User = () => {
                 }, [url]);
                 return (
                     <img
-                        src={imageUrl ? imageUrl : DefaultAvatar}
+                        src={imageUrl || DefaultAvatar}
                         alt="avatar"
                         style={{ width: '50px', height: '50px', borderRadius: '50%' }} // Bạn có thể điều chỉnh kích thước và kiểu dáng theo ý muốn
                     />
