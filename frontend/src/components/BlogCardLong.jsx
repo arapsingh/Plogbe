@@ -4,7 +4,7 @@ import { Plog } from '../assets/images/index.js';
 import { convertDateFormat } from '../utils/helper.js';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { useAppSelector } from '../hooks/hooks.ts'; 
+import { useAppSelector } from '../hooks/hooks.ts';
 import axios from 'axios';
 const BlogCardLong = (props) => {
     const [hovered, setHovered] = useState(false);
@@ -42,7 +42,7 @@ const BlogCardLong = (props) => {
         fetchImage(); // Gọi hàm lấy hình ảnh
         const fetchImageAvatar = async () => {
             try {
-                if (props.blog.url_image) {
+                if (props.author.url_avatar) {
                     const response = await axios.get(`https://cors-pass.onrender.com/${props.author.url_avatar}`, {
                         headers: {
                             'x-requested-with': 'XMLHttpRequest',
@@ -71,11 +71,7 @@ const BlogCardLong = (props) => {
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
             >
-                <img
-                    src={imageUrl}
-                    alt={props.blog.title}
-                    className="w-[200px] h-auto bg-black object-cover"
-                />
+                <img src={imageUrl} alt={props.blog.title} className="w-[200px] h-auto bg-black object-cover" />
                 <div className="px-4 flex-1 gap-2 flex flex-col justify-between items-start">
                     <h2
                         className={`font-semibold text-2xl h-16 whitespace-wrap transition-all duration-300 line-clamp-2 ${hovered ? 'text-info' : ''}`}

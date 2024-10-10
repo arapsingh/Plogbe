@@ -217,8 +217,13 @@ const BlogDetail = () => {
     useEffect(() => {
         if (currentUser.user_id) {
             // Chỉ kết nối nếu người dùng đã đăng nhập
-            socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
-
+            // socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
+            const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:3001', {
+                extraHeaders: {
+                    'X-Requested-With': 'XMLHttpRequest', // Thêm header tại đây
+                },
+                transports: ['websocket', 'polling'], // Chọn các phương thức truyền tải nếu cần
+            });
             // Gửi userId đến server sau khi kết nối
             socket.emit('authenticate', currentUser.user_id);
 

@@ -47,8 +47,13 @@ const Login = () => {
                             const userId = meResponse.user_id;
 
                             // Kết nối đến server socket
-                            const socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
-
+                            // const socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
+                            const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:3001', {
+                                extraHeaders: {
+                                    'X-Requested-With': 'XMLHttpRequest', // Thêm header tại đây
+                                },
+                                transports: ['websocket', 'polling'], // Chọn các phương thức truyền tải nếu cần
+                            });
                             // Phát sự kiện xác thực
                             socket.emit('authenticate', userId);
 

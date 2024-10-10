@@ -6,7 +6,7 @@ import { convertDateFormat } from '../utils/helper';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useAppSelector } from '../hooks/hooks.ts';
-import axios from 'axios'
+import axios from 'axios';
 const BlogCard = (props) => {
     const [hovered, setHovered] = useState(false);
     const currentUser = useAppSelector((state) => state.userSlice.currentUser);
@@ -41,7 +41,7 @@ const BlogCard = (props) => {
         fetchImage(); // Gọi hàm lấy hình ảnh
         const fetchImageAvatar = async () => {
             try {
-                if (props.blog.url_image) {
+                if (props.author.url_avatar) {
                     const response = await axios.get(`https://cors-pass.onrender.com/${props.author.url_avatar}`, {
                         headers: {
                             'x-requested-with': 'XMLHttpRequest',
@@ -70,11 +70,7 @@ const BlogCard = (props) => {
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
             >
-                <img
-                    src={imageUrl}
-                    alt={props.blog.title}
-                    className="w-auto h-[200px] bg-black object-cover "
-                />
+                <img src={imageUrl} alt={props.blog.title} className="w-auto h-[200px] bg-black object-cover " />
                 <div className="p-4 flex-1 gap-2 flex flex-col items-start">
                     <h2
                         className={` font-semibold text-2xl h-32 whitespace-wrap transition-all  duration-300 line-clamp-4 ${hovered ? 'text-info' : ''}`}
