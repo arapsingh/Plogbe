@@ -20,7 +20,7 @@ const Header = ({ isLogin }) => {
     };
 
     const avatar = useAppSelector((state) => state.userSlice.user.url_avatar);
-    const isLoading = useAppSelector((state) => state.userSlice.isGetLoading);
+    const isLoading = useAppSelector((state) => state.userSlice.isLoading);
     const dispatch = useAppDispatch();
     // const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
