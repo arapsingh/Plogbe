@@ -3,7 +3,7 @@ import { Spin, BlogCardLong, Pagination } from '../../../components';
 import { useAppSelector, useAppDispatch } from '../../../hooks/hooks.ts';
 import { useParams, useNavigate } from 'react-router-dom';
 import { blogActions, categoryActions } from '../../../redux/slices';
-import axios from 'axios';
+
 const BlogCategory = () => {
     const { category_id } = useParams();
     const cateId = Number(category_id);
@@ -31,33 +31,7 @@ const BlogCategory = () => {
         });
         dispatch(blogActions.getAllPagingBlog({ pageIndex, category: [cateId], searchItem: '' }));
     }, [dispatch, pageIndex, cateId]);
-    // for http
-    const [imageUrl, setImageUrl] = useState('');
-    useEffect(() => {
-        const fetchImage = async () => {
-            try {
-                if (category.url_image) {
-                    const response = await axios.get(`https://cors-pass.onrender.com/${category.url_image}`, {
-                        headers: {
-                            'x-requested-with': 'XMLHttpRequest',
-                        },
-                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
-                    });
-
-                    // Tạo một blob từ dữ liệu nhị phân
-                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
-                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
-
-                    console.log(imageUrl); // Log URL để kiểm tra
-                    setImageUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
-                }
-            } catch (error) {
-                console.error('Error fetching the image:', error); // Xử lý lỗi
-            }
-        };
-
-        fetchImage(); // Gọi hàm lấy hình ảnh
-    }, [category.url_image]);
+    //
     return (
         <>
             {isGetLoading && <Spin />}
@@ -69,7 +43,7 @@ const BlogCategory = () => {
                     </div>
                 </div>
                 <div className="w-0 hidden tablet:flex tablet:w-1/2 h-full items-center justify-center">
-                    <img src={imageUrl} alt={category.title} className="w-auto h-[220px]" />
+                    <img src={category.url_image} alt={category.title} className="w-auto h-[220px]" />
                 </div>
             </div>
             <div className="container mb-10 items-center flex flex-col min-h-[600px]">

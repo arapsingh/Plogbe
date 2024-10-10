@@ -22,7 +22,7 @@ import {
     updateReply,
     deleteReply,
 } from '../../../redux/slices/blog.slices.js'; // Đảm bảo đường dẫn đúng
-import axios from 'axios';
+
 const BlogDetail = () => {
     const navigate = useNavigate();
     const authorRef = useRef(null);
@@ -134,49 +134,18 @@ const BlogDetail = () => {
         return (
             <div>
                 <div ref={listRef} className={`overflow-y-auto ${users.length > 10 ? 'max-h-80' : ''}`}>
-                    {users.slice(0, visibleCount).map((user) => {
-                        const [userAvatarUrl, setUserAvatarUrl] = useState('');
-                        useEffect(() => {
-                            const fetchImage = async () => {
-                                try {
-                                    if (user.url_avatar) {
-                                        const response = await axios.get(
-                                            `https://cors-pass.onrender.com/${user.url_avatar}`,
-                                            {
-                                                headers: {
-                                                    'x-requested-with': 'XMLHttpRequest',
-                                                },
-                                                responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
-                                            }
-                                        );
-
-                                        // Tạo một blob từ dữ liệu nhị phân
-                                        const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
-                                        const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
-
-                                        console.log(imageUrl); // Log URL để kiểm tra
-                                        setUserAvatarUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
-                                    }
-                                } catch (error) {
-                                    console.error('Error fetching the image:', error); // Xử lý lỗi
-                                }
-                            };
-
-                            fetchImage(); // Gọi hàm lấy hình ảnh
-                        }, [user.url_avatar]);
-                        return (
-                            <div key={user.id} className="flex items-center mb-2">
-                                <img
-                                    src={userAvatarUrl || DefaultAvatar}
-                                    alt={`${user.first_name} ${user.last_name}`}
-                                    className="w-8 h-8 rounded-full mr-2"
-                                />
-                                <span>
-                                    {user.first_name} {user.last_name}
-                                </span>
-                            </div>
-                        );
-                    })}
+                    {users.slice(0, visibleCount).map((user) => (
+                        <div key={user.id} className="flex items-center mb-2">
+                            <img
+                                src={user.url_avatar || DefaultAvatar}
+                                alt={`${user.first_name} ${user.last_name}`}
+                                className="w-8 h-8 rounded-full mr-2"
+                            />
+                            <span>
+                                {user.first_name} {user.last_name}
+                            </span>
+                        </div>
+                    ))}
 
                     {visibleCount < users.length && users.length > 5 ? (
                         // Hiển thị nút "Xem thêm" nếu còn bản ghi chưa hiển thị và tổng số bản ghi lớn hơn 5
@@ -209,7 +178,7 @@ const BlogDetail = () => {
     ExpandableList.propTypes = {
         users: PropTypes.any.isRequired,
     };
-    // let socket; // Để giữ socket ở đây
+    let socket; // Để giữ socket ở đây
     useEffect(() => {
         console.log('Component re-rendering, comments:', blog.comments);
     }, [blog.comments]);
@@ -217,13 +186,8 @@ const BlogDetail = () => {
     useEffect(() => {
         if (currentUser.user_id) {
             // Chỉ kết nối nếu người dùng đã đăng nhập
-            // socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
-            const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:3001', {
-                extraHeaders: {
-                    'X-Requested-With': 'XMLHttpRequest', // Thêm header tại đây
-                },
-                // transports: ['websocket', 'polling'], // Chọn các phương thức truyền tải nếu cần
-            });
+            socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
+
             // Gửi userId đến server sau khi kết nối
             socket.emit('authenticate', currentUser.user_id);
 
@@ -277,85 +241,6 @@ const BlogDetail = () => {
     // useEffect(() => {
     //     console.log('Comments updated:', blog.comments);
     // }, [dispatch, blog.comments]); // Đăng ký lại khi comments thay đổi
-    const [blogAuthorAvatarUrl, setBlogAuthorAvatarUrl] = useState('');
-    useEffect(() => {
-        const fetchImage = async () => {
-            try {
-                if (blog.author.url_avatar) {
-                    const response = await axios.get(`https://cors-pass.onrender.com/${blog.author.url_avatar}`, {
-                        headers: {
-                            'x-requested-with': 'XMLHttpRequest',
-                        },
-                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
-                    });
-
-                    // Tạo một blob từ dữ liệu nhị phân
-                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
-                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
-
-                    console.log(imageUrl); // Log URL để kiểm tra
-                    setBlogAuthorAvatarUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
-                }
-            } catch (error) {
-                console.error('Error fetching the image:', error); // Xử lý lỗi
-            }
-        };
-
-        fetchImage(); // Gọi hàm lấy hình ảnh
-    }, [blog.author.url_avatar]);
-    const [blogThumbnailUrl, setBlogThumbnailUrl] = useState('');
-    useEffect(() => {
-        const fetchImage = async () => {
-            try {
-                if (blog.url_image) {
-                    const response = await axios.get(`https://cors-pass.onrender.com/${blog.url_image}`, {
-                        headers: {
-                            'x-requested-with': 'XMLHttpRequest',
-                        },
-                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
-                    });
-
-                    // Tạo một blob từ dữ liệu nhị phân
-                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
-                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
-
-                    console.log(imageUrl); // Log URL để kiểm tra
-                    setBlogThumbnailUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
-                }
-            } catch (error) {
-                console.error('Error fetching the image:', error); // Xử lý lỗi
-            }
-        };
-
-        fetchImage(); // Gọi hàm lấy hình ảnh
-    }, [blog.url_image]);
-    useEffect(() => {
-        const updateImageUrls = async () => {
-            if (contentRef.current) {
-                const imgElements = contentRef.current.getElementsByTagName('img');
-                for (let img of imgElements) {
-                    const originalUrl = img.src;
-                    try {
-                        const response = await axios.get(`https://cors-pass.onrender.com/${originalUrl}`, {
-                            headers: {
-                                'x-requested-with': 'XMLHttpRequest',
-                            },
-                            responseType: 'arraybuffer',
-                        });
-
-                        const blob = new Blob([response.data], { type: 'image/png' }); // Đặt loại hình ảnh phù hợp
-                        const secureImageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
-
-                        img.src = secureImageUrl; // Cập nhật thuộc tính src của ảnh
-                    } catch (error) {
-                        console.error('Error fetching the image:', error);
-                    }
-                }
-            }
-        };
-
-        updateImageUrls();
-    }, [blog.content]);
     return (
         <>
             {(isGetLoading || isLoading) && <Spin />}
@@ -401,7 +286,7 @@ const BlogDetail = () => {
                             </Popover>
                         </div>
                         <img
-                            src={blogAuthorAvatarUrl || Plog}
+                            src={blog.author.url_avatar || Plog}
                             alt="avt-author"
                             className="rounded-full w-10 h-10 border border-gray-400"
                         />
@@ -431,7 +316,7 @@ const BlogDetail = () => {
                         <p className="text-5xl font-semibold mx-4">{blog.title}</p>
                         <div id="author_info" ref={authorRef} className="flex gap-2 items-center mx-4">
                             <img
-                                src={blogAuthorAvatarUrl || Plog}
+                                src={blog.author.url_avatar || Plog}
                                 alt="avt-admin"
                                 className="rounded-full w-14 h-14 border border-gray-400"
                             />
@@ -445,7 +330,7 @@ const BlogDetail = () => {
                             </div>
                         </div>
                         <div className="blog-content">
-                            <img src={blogThumbnailUrl} alt="thumbnail" className="" />
+                            <img src={blog.url_image} alt="thumbnail" className="" />
                         </div>
                         <div
                             ref={contentRef}
@@ -455,7 +340,7 @@ const BlogDetail = () => {
                         <div ref={bottomAuthorRef} className="flex justify-between">
                             <div className="flex items-center gap-2">
                                 <img
-                                    src={blogAuthorAvatarUrl || Plog}
+                                    src={blog.author.url_avatar || Plog}
                                     alt="avt-admin"
                                     className="rounded-full w-14 h-14 border border-gray-400"
                                 />
