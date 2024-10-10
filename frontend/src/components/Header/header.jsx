@@ -29,7 +29,7 @@ const Header = ({ isLogin }) => {
     });
     return (
         <>
-            {isLoading && <Spin />}
+            {isLogin && isLoading && <Spin />}
             <header className="header flex items-center justify-between p-4 bg-lightorange">
                 <Toaster />
 
