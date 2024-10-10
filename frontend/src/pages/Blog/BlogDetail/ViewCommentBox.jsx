@@ -16,7 +16,6 @@ import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { handleReaction } from '../../../redux/slices/blog.slices.js';
 import CreateCommentEditor from './CreateCommentEditor.jsx';
-import axios from 'axios';
 const ViewCommentBox = ({ comment, className }) => {
     const isGetLoading = useAppSelector((state) => state.blogSlice.isGetLoading);
     const isLogin = useAppSelector((state) => state.userSlice.isLogin);
@@ -84,13 +83,7 @@ const ViewCommentBox = ({ comment, className }) => {
             (response) => {
                 let socket;
                 if (response.payload.status_code == 200) {
-                    // socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
-                    const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:3001', {
-                        extraHeaders: {
-                            'X-Requested-With': 'XMLHttpRequest', // Thêm header tại đây
-                        },
-                        transports: ['websocket', 'polling'], // Chọn các phương thức truyền tải nếu cần
-                    });
+                    socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
                     if (comment.comment_id) {
                         socket.emit('delete-comment', {
                             comment_id: comment.comment_id,
@@ -136,49 +129,18 @@ const ViewCommentBox = ({ comment, className }) => {
         return (
             <div>
                 <div ref={listRef} className={`overflow-y-auto ${users.length > 10 ? 'max-h-80' : ''}`}>
-                    {users.slice(0, visibleCount).map((user) => {
-                        const [userAvatarUrl, setUserAvatarUrl] = useState('');
-                        useEffect(() => {
-                            const fetchImage = async () => {
-                                try {
-                                    if (user.user_url_avatar) {
-                                        const response = await axios.get(
-                                            `https://cors-pass.onrender.com/${user.user_url_avatar}`,
-                                            {
-                                                headers: {
-                                                    'x-requested-with': 'XMLHttpRequest',
-                                                },
-                                                responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
-                                            }
-                                        );
-
-                                        // Tạo một blob từ dữ liệu nhị phân
-                                        const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
-                                        const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
-
-                                        console.log(imageUrl); // Log URL để kiểm tra
-                                        setUserAvatarUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
-                                    }
-                                } catch (error) {
-                                    console.error('Error fetching the image:', error); // Xử lý lỗi
-                                }
-                            };
-
-                            fetchImage(); // Gọi hàm lấy hình ảnh
-                        }, [user.user_url_avatar]);
-                        return (
-                            <div key={user.user_id} className="flex items-center mb-2">
-                                <img
-                                    src={userAvatarUrl || DefaultAvatar}
-                                    alt={`${user.user_first_name} ${user.user_last_name}`}
-                                    className="w-8 h-8 rounded-full mr-2"
-                                />
-                                <span>
-                                    {user.user_first_name} {user.user_last_name}
-                                </span>
-                            </div>
-                        );
-                    })}
+                    {users.slice(0, visibleCount).map((user) => (
+                        <div key={user.user_id} className="flex items-center mb-2">
+                            <img
+                                src={user.user_url_avatar || DefaultAvatar}
+                                alt={`${user.user_first_name} ${user.user_last_name}`}
+                                className="w-8 h-8 rounded-full mr-2"
+                            />
+                            <span>
+                                {user.user_first_name} {user.user_last_name}
+                            </span>
+                        </div>
+                    ))}
 
                     {visibleCount < users.length && users.length > 5 ? (
                         // Hiển thị nút "Xem thêm" nếu còn bản ghi chưa hiển thị và tổng số bản ghi lớn hơn 5
@@ -231,14 +193,9 @@ const ViewCommentBox = ({ comment, className }) => {
                 type: isLike ? 'LIKE' : 'DISLIKE',
             })
         ).then((response) => {
-            // let socket;
+            let socket;
             if (response.payload.status_code === 200) {
-                const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:3001', {
-                    extraHeaders: {
-                        'X-Requested-With': 'XMLHttpRequest', // Thêm header tại đây
-                    },
-                    // transports: ['websocket', 'polling'], // Chọn các phương thức truyền tải nếu cần
-                });
+                socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
                 if ((isLiked && isLike) || (isDisliked && !isLike)) {
                     // Nếu đã thích hoặc không thích và action giống như hiện tại thì xóa phản ứng
                     socket.emit('delete-reaction-comment', {
@@ -272,32 +229,6 @@ const ViewCommentBox = ({ comment, className }) => {
         });
     };
     const [isOpenReplyEditor, setIsOpenReplyEditor] = useState(false);
-    const [commentAvatarUrl, setCommentAvatarUrl] = useState('');
-    useEffect(() => {
-        const fetchImage = async () => {
-            try {
-                if (comment.user_url_avatar) {
-                    const response = await axios.get(`https://cors-pass.onrender.com/${comment.user_url_avatar}`, {
-                        headers: {
-                            'x-requested-with': 'XMLHttpRequest',
-                        },
-                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
-                    });
-
-                    // Tạo một blob từ dữ liệu nhị phân
-                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
-                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
-
-                    console.log(imageUrl); // Log URL để kiểm tra
-                    setCommentAvatarUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
-                }
-            } catch (error) {
-                console.error('Error fetching the image:', error); // Xử lý lỗi
-            }
-        };
-
-        fetchImage(); // Gọi hàm lấy hình ảnh
-    }, [comment.user_url_avatar]);
     return (
         <>
             {isGetLoading && <Spin />}
@@ -350,7 +281,7 @@ const ViewCommentBox = ({ comment, className }) => {
                     <div className="flex justify-between items-center w-full">
                         <div className="flex items-center gap-3">
                             <img
-                                src={commentAvatarUrl || DefaultAvatar}
+                                src={comment.user_url_avatar || DefaultAvatar}
                                 alt={`${comment.user_first_name} ${comment.user_last_name}`}
                                 className="w-12 h-12 rounded-full"
                             />
