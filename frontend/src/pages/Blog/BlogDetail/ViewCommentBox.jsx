@@ -231,9 +231,14 @@ const ViewCommentBox = ({ comment, className }) => {
                 type: isLike ? 'LIKE' : 'DISLIKE',
             })
         ).then((response) => {
-            let socket;
+            // let socket;
             if (response.payload.status_code === 200) {
-                socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
+                const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:3001', {
+                    extraHeaders: {
+                        'X-Requested-With': 'XMLHttpRequest', // Thêm header tại đây
+                    },
+                    // transports: ['websocket', 'polling'], // Chọn các phương thức truyền tải nếu cần
+                });
                 if ((isLiked && isLike) || (isDisliked && !isLike)) {
                     // Nếu đã thích hoặc không thích và action giống như hiện tại thì xóa phản ứng
                     socket.emit('delete-reaction-comment', {

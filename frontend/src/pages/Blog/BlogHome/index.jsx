@@ -70,11 +70,7 @@ const BlogHome = () => {
                                     blogs.length > 0 &&
                                     blogs.map((blog) => (
                                         <div className="w-full" key={blog.blog_id}>
-                                            <BlogCardLong
-                                                key={blog.blog_id}
-                                                blog={blog}
-                                                author={blog.author}
-                                            />
+                                            <BlogCardLong key={blog.blog_id} blog={blog} author={blog.author} />
                                         </div>
                                     ))}
                             </div>
