@@ -3,10 +3,10 @@ import Cookies from 'js-cookie';
 // const constants = require('../constants');
 import { userApis } from '../api';
 import { io } from 'socket.io-client'; // Import socket.io-client
-const corsAnywhereUrl = 'https://cors-pass.onrender.com/'; // Use your own CORS Anywhere instance if possible
+// const corsAnywhereUrl = 'https://cors-pass.onrender.com/'; // Use your own CORS Anywhere instance if possible
 
 const axiosPublic = axios.create({
-    baseURL: corsAnywhereUrl + (process.env.REACT_APP_API_URL || 'http://localhost:3001'),
+    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001',
 });
 
 const axiosInstance = axios.create();

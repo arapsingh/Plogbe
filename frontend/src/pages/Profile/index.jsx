@@ -10,10 +10,33 @@ import { useEffect, useState } from 'react';
 import { DefaultAvatar } from '../../assets/images/index.js';
 import toast from 'react-hot-toast';
 const Profile = () => {
-    const isLoading = useAppSelector((state) => state.userSlice.isGetLoading);
+    const isLoading = useAppSelector((state) => state.userSlice.isLoading);
+    const isGetLoading = useAppSelector((state) => state.userSlice.isGetLoading);
     const getProfile = useAppSelector((state) => state.userSlice.user);
     const dispatch = useAppDispatch();
     const onFinish = (values) => {
+        const data = {
+            first_name: values.first_name,
+            last_name: values.last_name,
+            description: values.description,
+        };
+        const updateProfile = async () => {
+            dispatch(userActions.updateProfile(data))
+                .then((response) => {
+                    if (response.payload && response.payload.status_code === 200) {
+                        toast.success(response.payload.message);
+                    } else {
+                        toast.error('An error occurred.');
+                    }
+                })
+                .catch(() => {
+                    // Đặt isLoading là false nếu có lỗi
+                    dispatch(userActions.setLoading(false));
+                    toast.error('An error occurred while updating profile.');
+                });
+        };
+        dispatch(userActions.setLoading(true));
+        updateProfile();
         // Tải lên avatar nếu có file được chọn
         if (selectedFile) {
             try {
@@ -21,25 +44,20 @@ const Profile = () => {
                 formData.append('avatar', selectedFile);
 
                 // Gọi hàm xử lý upload avatar từ redux slice
-                dispatch(userActions.changeAvatar(formData));
-                toast.success('Avatar updated successfully!');
-                window.location.reload();
+                dispatch(userActions.changeAvatar(formData)).then((response) => {
+                    dispatch(userActions.setLoading(false));
+                    if (response.payload.status_code == 200) {
+                        {
+                            toast.success('Avatar updated successfully!');
+                            window.location.reload();
+                        }
+                    }
+                });
             } catch (error) {
+                dispatch(userActions.setLoading(false));
                 toast.error('Error updating avatar.');
             }
         }
-        const data = {
-            first_name: values.first_name,
-            last_name: values.last_name,
-            description: values.description,
-        };
-        dispatch(userActions.updateProfile(data)).then((response) => {
-            if (response.payload && response.payload.status_code === 200) {
-                toast.success(response.payload.message);
-            } else {
-                toast.error('An error occurred.');
-            }
-        });
     };
     const onFinishFailed = () => {
         return;
@@ -99,7 +117,7 @@ const Profile = () => {
     }, [selectedFile, getProfile?.url_avatar]);
     return (
         <>
-            {isLoading ? (
+            {isGetLoading ? (
                 <Spin />
             ) : (
                 <div className="container mx-auto">
@@ -157,7 +175,7 @@ const Profile = () => {
                                     </div>
                                 </div>
                                 <div className="mb-2">
-                                    <Form.Item label="Email" name="email" >
+                                    <Form.Item label="Email" name="email">
                                         <Input disabled />
                                     </Form.Item>
                                 </div>

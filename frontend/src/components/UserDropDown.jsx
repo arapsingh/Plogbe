@@ -22,32 +22,32 @@ const UserDropDown = ({ avatar }) => {
     const handleMyBlogClick = () => {
         navigate('/my-blog');
     };
-    const [imageUrl, setImageUrl] = useState('');
-    useEffect(() => {
-        const fetchImage = async () => {
-            try {
-                if (avatar) {
-                    const response = await axios.get(`https://cors-pass.onrender.com/${avatar}`, {
-                        headers: {
-                            'x-requested-with': 'XMLHttpRequest',
-                        },
-                        responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
-                    });
+    // const [imageUrl, setImageUrl] = useState('');
+    // useEffect(() => {
+    //     const fetchImage = async () => {
+    //         try {
+    //             if (avatar) {
+    //                 const response = await axios.get(`https://cors-pass.onrender.com/${avatar}`, {
+    //                     headers: {
+    //                         'x-requested-with': 'XMLHttpRequest',
+    //                     },
+    //                     responseType: 'arraybuffer', // Chỉ định kiểu phản hồi là arraybuffer
+    //                 });
 
-                    // Tạo một blob từ dữ liệu nhị phân
-                    const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
-                    const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
+    //                 // Tạo một blob từ dữ liệu nhị phân
+    //                 const blob = new Blob([response.data], { type: 'image/png' }); // Hoặc loại hình ảnh khác nếu cần
+    //                 const imageUrl = URL.createObjectURL(blob); // Tạo URL cho blob
 
-                    console.log(imageUrl); // Log URL để kiểm tra
-                    setImageUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
-                }
-            } catch (error) {
-                console.error('Error fetching the image:', error); // Xử lý lỗi
-            }
-        };
+    //                 console.log(imageUrl); // Log URL để kiểm tra
+    //                 setImageUrl(imageUrl); // Cập nhật trạng thái với URL hình ảnh
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching the image:', error); // Xử lý lỗi
+    //         }
+    //     };
 
-        fetchImage(); // Gọi hàm lấy hình ảnh
-    }, [avatar]);
+    //     fetchImage(); // Gọi hàm lấy hình ảnh
+    // }, [avatar]);
     // Tạo menu items
     const menu = (
         <Menu className="w-[250px]">
@@ -82,7 +82,7 @@ const UserDropDown = ({ avatar }) => {
         <Dropdown overlay={menu} trigger={['click']}>
             <Button type="text" className="p-0" style={{ border: 'none', background: 'transparent' }}>
                 <img
-                    src={imageUrl || DefaultAvatar}
+                    src={avatar || DefaultAvatar}
                     alt="User Avatar"
                     className="w-10 h-10 rounded-full cursor-pointer"
                 />
