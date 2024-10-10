@@ -72,6 +72,7 @@ const PopUpAddBlogCard = ({ handleCancelButtonClicked }) => {
             }
         };
     }, [imagePreview]);
+    
     const yupSync = {
         async validator({ field }, value) {
             await createBlogValidationSchema.validateSyncAt(field, { [field]: value });
