@@ -19,7 +19,7 @@ const BlogCategory = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const isGetLoading = useAppSelector((state) => state.blogSlice.isGetLoading);
-    const blogs = useAppSelector((state) => state.blogSlice.blogs) || [];
+    const blogs = useAppSelector((state) => state.blogSlice.relatedBlogs) || [];
     const totalPage = useAppSelector((state) => state.blogSlice.totalPage) || 0;
     const totalRecord = useAppSelector((state) => state.blogSlice.totalRecord) || 0;
     const category = useAppSelector((state) => state.categorySlice.category) || {};

@@ -206,6 +206,9 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
+        setLoading(state, action) {
+            state.isLoading = action.payload;
+        },
         setUser: (state, action) => {
             state.currentUser.description = action.payload.description;
             state.currentUser.email = action.payload.email;
@@ -310,24 +313,24 @@ const userSlice = createSlice({
         builder.addCase(getProfile.rejected, (state) => {
             state.isGetLoading = false;
         });
-        builder.addCase(changeAvatar.pending, (state) => {
-            state.isLoading = true;
-        });
-        builder.addCase(changeAvatar.fulfilled, (state) => {
-            state.isLoading = false;
-        });
-        builder.addCase(changeAvatar.rejected, (state) => {
-            state.isLoading = false;
-        });
-        builder.addCase(updateProfile.pending, (state) => {
-            state.isLoading = true;
-        });
-        builder.addCase(updateProfile.fulfilled, (state) => {
-            state.isLoading = false;
-        });
-        builder.addCase(updateProfile.rejected, (state) => {
-            state.isLoading = false;
-        });
+        // builder.addCase(changeAvatar.pending, (state) => {
+        //     state.isLoading = true;
+        // });
+        // builder.addCase(changeAvatar.fulfilled, (state) => {
+        //     state.isLoading = false;
+        // });
+        // builder.addCase(changeAvatar.rejected, (state) => {
+        //     state.isLoading = false;
+        // });
+        // builder.addCase(updateProfile.pending, (state) => {
+        //     state.isLoading = true;
+        // });
+        // builder.addCase(updateProfile.fulfilled, (state) => {
+        //     state.isLoading = false;
+        // });
+        // builder.addCase(updateProfile.rejected, (state) => {
+        //     state.isLoading = false;
+        // });
 
         builder.addCase(getAllUsersWithPagination.pending, (state) => {
             state.isGetLoading = true;
@@ -390,7 +393,7 @@ const userSlice = createSlice({
     },
 });
 
-const { setUser, setLogout, setEmail } = userSlice.actions;
+const { setUser, setLogout, setEmail, setLoading } = userSlice.actions;
 
 // userSlice.reducer;
 
@@ -463,6 +466,7 @@ export {
     setUser,
     setLogout,
     setEmail,
+    setLoading,
     createNewUser,
     editUser,
     deleteUser,

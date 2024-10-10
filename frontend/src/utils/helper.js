@@ -40,31 +40,31 @@ export const convertDateTimeFormat = (inputDate) => {
 
     return formattedDateTime;
 };
-export const fetchAvatarWithHeaders = async (avatarUrl, customHeaders = {}) => {
-    const CORS_PROXY = 'https://cors-pass.onrender.com';
-    const fullUrl = `${CORS_PROXY}/${avatarUrl}`;
+// export const fetchAvatarWithHeaders = async (avatarUrl, customHeaders = {}) => {
+//     const CORS_PROXY = 'https://cors-pass.onrender.com';
+//     const fullUrl = `${CORS_PROXY}/${avatarUrl}`;
 
-    // Thêm các header vào yêu cầu
-    const headers = {
-        'X-Requested-With': 'XMLHttpRequest', // Header mặc định
-        ...customHeaders, // Header tùy chỉnh nếu có
-    };
+//     // Thêm các header vào yêu cầu
+//     const headers = {
+//         'X-Requested-With': 'XMLHttpRequest', // Header mặc định
+//         ...customHeaders, // Header tùy chỉnh nếu có
+//     };
 
-    try {
-        const response = await fetch(fullUrl, {
-            method: 'GET',
-            headers: headers, // Gửi header cùng với request
-        });
+//     try {
+//         const response = await fetch(fullUrl, {
+//             method: 'GET',
+//             headers: headers, // Gửi header cùng với request
+//         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! status: ${response.status}`);
+//         }
 
-        // Trả về blob URL nếu thành công
-        const blob = await response.blob();
-        return URL.createObjectURL(blob);
-    } catch (error) {
-        console.error('Error fetching avatar with headers:', error);
-        throw error;
-    }
-};
+//         // Trả về blob URL nếu thành công
+//         const blob = await response.blob();
+//         return URL.createObjectURL(blob);
+//     } catch (error) {
+//         console.error('Error fetching avatar with headers:', error);
+//         throw error;
+//     }
+// };
