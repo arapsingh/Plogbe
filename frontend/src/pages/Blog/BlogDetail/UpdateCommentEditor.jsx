@@ -49,7 +49,13 @@ const UpdateCommentEditor = ({ comment, handleCancelUpdateComment }) => {
             const response = await dispatch(blogActions.updateCommentBlog(data));
             let socket; // Khai báo socket ở đây
             if (response.payload.status_code === 200) {
-                socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
+                // socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:3001');
+                const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:3001', {
+                    extraHeaders: {
+                        'X-Requested-With': 'XMLHttpRequest', // Thêm header tại đây
+                    },
+                    transports: ['websocket', 'polling'], // Chọn các phương thức truyền tải nếu cần
+                });
                 if (comment.comment_id) {
                     socket.emit('update-comment', {
                         content: contentData,

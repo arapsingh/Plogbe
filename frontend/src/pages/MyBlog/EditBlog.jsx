@@ -233,16 +233,20 @@ const EditBlog = () => {
     const onFinish = async (values) => {
         try {
             // Lấy lại các thẻ <img> từ nội dung
-            const imgElements = editorRef.current.getElementsByTagName('img');
+            if (editorRef.current) {
+                const imgElements = editorRef.current.getElementsByTagName('img');
 
-            for (let img of imgElements) {
-                const blobUrl = img.src;
-                const originalUrl = img.getAttribute('data-original-url');
+                for (let img of imgElements) {
+                    const blobUrl = img.src;
+                    const originalUrl = img.getAttribute('data-original-url');
 
-                // Nếu ảnh chưa thay đổi, đặt lại URL gốc
-                if (blobUrl.startsWith('blob:')) {
-                    img.src = originalUrl;
+                    // Nếu ảnh chưa thay đổi, đặt lại URL gốc
+                    if (blobUrl.startsWith('blob:')) {
+                        img.src = originalUrl;
+                    }
                 }
+            } else {
+                toast.error("an error with editorRef");
             }
 
             // Cập nhật lại nội dung sau khi xử lý ảnh
