@@ -20,16 +20,15 @@ const Header = ({ isLogin }) => {
     };
 
     const avatar = useAppSelector((state) => state.userSlice.user.url_avatar);
+    const isLoading = useAppSelector((state) => state.userSlice.isGetLoading);
     const dispatch = useAppDispatch();
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
-        dispatch(userActions.getMe()).then((response) => {
-            if (response) setIsLoading(false);
-        });
-    });
+        dispatch(userActions.getProfile());
+    }, [dispatch]);
     return (
         <>
-            {isLogin && isLoading && <Spin />}
+            {isLoading && <Spin />}
             <header className="header flex items-center justify-between p-4 bg-lightorange">
                 <Toaster />
 

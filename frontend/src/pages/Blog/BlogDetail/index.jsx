@@ -209,7 +209,7 @@ const BlogDetail = () => {
     ExpandableList.propTypes = {
         users: PropTypes.any.isRequired,
     };
-    let socket; // Để giữ socket ở đây
+    // let socket; // Để giữ socket ở đây
     useEffect(() => {
         console.log('Component re-rendering, comments:', blog.comments);
     }, [blog.comments]);
@@ -222,7 +222,7 @@ const BlogDetail = () => {
                 extraHeaders: {
                     'X-Requested-With': 'XMLHttpRequest', // Thêm header tại đây
                 },
-                transports: ['websocket', 'polling'], // Chọn các phương thức truyền tải nếu cần
+                // transports: ['websocket', 'polling'], // Chọn các phương thức truyền tải nếu cần
             });
             // Gửi userId đến server sau khi kết nối
             socket.emit('authenticate', currentUser.user_id);
