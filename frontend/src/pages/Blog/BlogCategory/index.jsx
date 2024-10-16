@@ -35,11 +35,15 @@ const BlogCategory = () => {
     return (
         <>
             {isGetLoading && <Spin />}
-            <div className="w-full h-[400px] bg-gray-200 flex -translate-y-[30px] ">
+            <div className="w-full h-[600px] bg-gray-200 flex -translate-y-[30px] ">
                 <div className="w-1/2 h-full relative">
                     <div className="absolute top-1/4 left-1/4 w-2/3">
                         <p className="text-5xl font-semibold line-clamp-2">{category.title}</p>
-                        <p className="line-clamp-4 text-xl">{category.description}</p>
+                        {/* <p className="line-clamp-4 text-xl">{category.description}</p> */}
+                        <span
+                            className="line-clamp-8 text-xl"
+                            dangerouslySetInnerHTML={{ __html: category.description }}
+                        ></span>
                     </div>
                 </div>
                 <div className="w-0 hidden tablet:flex tablet:w-1/2 h-full items-center justify-center">

@@ -10,23 +10,64 @@ const axiosPublic = axios.create({
 });
 
 const axiosInstance = axios.create();
+let isRefreshing = false; // Biến toàn cục để theo dõi yêu cầu làm mới token
+let subscribers = []; // Danh sách các yêu cầu sẽ được xử lý sau khi làm mới token
+const onRefreshed = (accessToken) => {
+    subscribers.forEach((callback) => callback(accessToken)); // Gọi lại tất cả các callback
+    subscribers = []; // Reset danh sách callback
+};
+
+// Hàm thêm subscriber
+const addSubscriber = (callback) => {
+    subscribers.push(callback); // Thêm callback vào danh sách
+};
+
 axiosPublic.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        return response;
+    },
     async (error) => {
         const config = error?.config;
         if (error?.response?.status === 401 && !config._retry) {
-            config._retry = true;
-            const response = await userApis.refreshAccessToken();
-            const accessToken = response.data.data.accessToken;
-            if (accessToken) {
-                Cookies.set('accessToken', accessToken);
-                config.headers = {
-                    ...config.headers,
-                    authorization: `Bearer ${accessToken}`,
-                };
-                return axiosInstance(config);
+            if (isRefreshing) {
+                return new Promise((resolve, reject) => {
+                    // Thêm callback vào danh sách subscribers
+                    addSubscriber((accessToken) => {
+                        config.headers['Authorization'] = `Bearer ${accessToken}`;
+                        resolve(axiosInstance(config)); // Gửi lại yêu cầu sau khi làm mới token
+                    });
+                });
+            }
+            config._retry = true; // Đánh dấu yêu cầu này là đã thử lại
+            isRefreshing = true; // Đánh dấu rằng token đang được làm mới
+            try {
+                const response = await userApis.refreshAccessToken();
+                const accessToken = response.data.data.accessToken;
+
+                if (accessToken) {
+                    console.log('new accessToken:', accessToken);
+                    Cookies.set('accessToken', accessToken);
+
+                    // Cập nhật header cho yêu cầu
+                    config.headers = {
+                        ...config.headers,
+                        authorization: `Bearer ${accessToken}`,
+                    };
+
+                    // Gọi lại tất cả các subscriber
+                    onRefreshed(accessToken);
+
+                    return axiosInstance(config); // Đảm bảo rằng bạn đang trả về kết quả từ yêu cầu này
+                }
+            } catch (apiError) {
+                console.error('Failed to refresh access token:', apiError);
+                return Promise.reject(apiError); // Trả về lỗi nếu có vấn đề khi làm mới token
+            } finally {
+                isRefreshing = false; // Reset lại trạng thái khi hoàn tất
             }
         }
+
+        // Xử lý các lỗi khác
         if (error) {
             if (error.response.data.message === 'Vui lòng đăng nhập lại') {
                 Cookies.remove('refreshToken');
@@ -35,9 +76,9 @@ axiosPublic.interceptors.response.use(
             }
             return Promise.reject(error.response);
         }
-        // return error;
     }
 );
+
 axiosPublic.interceptors.request.use(
     async (config) => {
         const accessToken = Cookies.get('accessToken');
@@ -60,7 +101,7 @@ const apiCaller = (method, path, data) => {
         headers: {
             'Access-Control-Allow-Credentials': true,
             'Access-Control-Allow-Origin': '*',
-            'X-Requested-With': 'XMLHttpRequest', // Thêm header này
+            // 'X-Requested-With': 'XMLHttpRequest', // Thêm header này
             rftoken: `rfToken ${refreshToken}`,
         },
         url: `/api/${path}`,
@@ -74,7 +115,7 @@ const apiCallerVnpay = (method, path, data) => {
         headers: {
             'Access-Control-Allow-Credentials': true,
             'Access-Control-Allow-Origin': '*',
-            'X-Requested-With': 'XMLHttpRequest', // Thêm header này
+            // 'X-Requested-With': 'XMLHttpRequest', // Thêm header này
             // "Origin:": "https://sandbox.vnpayment.vn",
             rftoken: `rfToken ${refreshToken}`,
         },

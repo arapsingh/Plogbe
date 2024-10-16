@@ -15,7 +15,7 @@ export const createCategoryValidationSchema = Yup.object({
     description: Yup.string()
         .trim()
         .required('Mô tả là bắt buộc')
-        .max(200, 'Mô tả tối đa 200 kí tự'),
+        .max(800, 'Mô tả tối đa 800 kí tự'),
 });
 export const editCategoryValidationSchema = Yup.object({
     category_image: Yup.mixed()
@@ -31,5 +31,5 @@ export const editCategoryValidationSchema = Yup.object({
     description: Yup.string()
         .trim()
         .required('Mô tả là bắt buộc')
-        .max(400, 'Mô tả tối đa 200 kí tự'),
+        .max(800, 'Mô tả tối đa 800 kí tự'),
 });

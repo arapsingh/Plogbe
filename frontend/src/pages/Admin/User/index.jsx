@@ -46,6 +46,7 @@ const User = () => {
     const handleReset = () => {
         setPageIndex(1);
         setSearchItem('');
+        setFilterLabel('All');
         dispatch(userActions.getAllUsersWithPagination({ searchItem, pageIndex, role }));
     };
     const handleCancelModal = () => {
@@ -196,12 +197,54 @@ const User = () => {
         });
         setIsOpenRestoreModal(false);
     };
+    const handleFilterUserClick = (role) => {
+        dispatch(userActions.getAllUsersWithPagination({ searchItem: '', pageIndex: 1, role: role }));
+    };
+    const [filterLabel, setFilterLabel] = useState('All');
     return (
         <>
             {(isGetLoading || isLoading) && <Spin />}
             <div className="flex flex-col min-h-screen bg-background_2">
                 <div className="flex flex-col tablet:flex-row items-center gap-4 p-4">
                     <div className="w-[1000px] ml-48 flex items-center justify-center gap-4">
+                        <Dropdown
+                            overlay={
+                                <Menu>
+                                    <>
+                                        <Menu.Item
+                                            key="admin"
+                                            onClick={() => {
+                                                setFilterLabel('Quản trị viên');
+                                                handleFilterUserClick('Admin');
+                                            }}
+                                        >
+                                            Quản trị viên
+                                        </Menu.Item>
+                                        <Menu.Item
+                                            key="user"
+                                            onClick={() => {
+                                                setFilterLabel('Người dùng');
+                                                handleFilterUserClick('User');
+                                            }}
+                                        >
+                                            Người dùng
+                                        </Menu.Item>
+                                    </>
+                                </Menu>
+                            }
+                            trigger={['click']}
+                        >
+                            <Button
+                                style={{ cursor: 'pointer' }}
+                                htmlType="button"
+                                type="primary"
+                                onClick={() => {
+                                    return;
+                                }}
+                            >
+                                {filterLabel}
+                            </Button>
+                        </Dropdown>
                         <div className="relative w-full">
                             <input
                                 ref={inputRef}

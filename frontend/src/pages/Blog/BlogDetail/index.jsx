@@ -241,6 +241,29 @@ const BlogDetail = () => {
     // useEffect(() => {
     //     console.log('Comments updated:', blog.comments);
     // }, [dispatch, blog.comments]); // Đăng ký lại khi comments thay đổi
+    const [visibleCountComment, setVisibleCountComment] = useState(10); // Số bản ghi hiển thị ban đầu
+    const listCommentRef = useRef(null); // Tham chiếu đến danh sách reply
+    const handleLoadMoreComment = () => {
+        if (listCommentRef.current) {
+            const currentScrollHeight = listCommentRef.current.scrollHeight; // Chiều cao hiện tại của danh sách
+            const newVisibleCountComment = visibleCountComment + 10; // Tăng số bản ghi hiển thị
+            setVisibleCountComment(newVisibleCountComment); // Cập nhật số bản ghi hiển thị
+
+            // Sau khi cập nhật, cuộn thanh đến vị trí mới của các bản ghi
+            setTimeout(() => {
+                // Đợi cho bản ghi mới được hiển thị rồi cuộn
+                listCommentRef.current.scrollTop = currentScrollHeight; // Cuộn đến cuối danh sách
+            }, 0);
+        }
+    };
+
+    // Thu gọn danh sách về 5 bản ghi
+    const handleCollapseComment = () => {
+        setVisibleCountComment(10);
+        if (listCommentRef.current) {
+            listCommentRef.current.scrollTop = 0; // Đặt lại vị trí thanh cuộn về đầu
+        }
+    };
     return (
         <>
             {(isGetLoading || isLoading) && <Spin />}
@@ -399,8 +422,32 @@ const BlogDetail = () => {
                     <CommentInput blog={blog}></CommentInput>
                 </div>
                 <div className="container justify-center">
-                    {blog.comments.length > 0 &&
-                        blog.comments.map((comment) => <ViewCommentBox key={comment.comment_id} comment={comment} />)}
+                    {blog.comments.length > 0 && (
+                        <div
+                            ref={listCommentRef}
+                            // className={`overflow-y-auto ${blog.comments.length > 10 ? 'max-h-screen' : ''}`}
+                        >
+                            {blog.comments.slice(0, visibleCountComment).map((comment) => (
+                                <ViewCommentBox key={comment.comment_id} comment={comment} className="bg-nav" />
+                            ))}
+                            {blog.comments.length > visibleCountComment && (
+                                <p
+                                    onClick={handleLoadMoreComment}
+                                    className="container text-blue-500 cursor-pointer underline italic mb-8"
+                                >
+                                    Xem thêm bình luận
+                                </p>
+                            )}
+                            {visibleCountComment > 10 && (
+                                <p
+                                    onClick={handleCollapseComment}
+                                    className="container text-red-500 cursor-pointer underline italic mb-8"
+                                >
+                                    Thu gọn
+                                </p>
+                            )}{' '}
+                        </div>
+                    )}
                 </div>
                 <div className="container overflow-visible">
                     {top5Related.length > 0 && <CarouselBlogRelated blogs={top5Related} />}

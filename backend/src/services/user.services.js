@@ -304,6 +304,7 @@ const changeAvatar = async (req) => {
             let oldAvatarPath = '';
             if (isExistUser.url_avatar) oldAvatarPath = helper.ConvertHelper.deConvertFilePath(isExistUser.url_avatar);
             if (file) {
+                console.log("fp:", file.path);
                 const fullpathConverted = helper.ConvertHelper.convertFilePath(file.path);
                 const changeAvatarUser = await configs.db.user.update({
                     where: {
@@ -325,6 +326,7 @@ const changeAvatar = async (req) => {
             }
         }
     } catch (error) {
+        console.log(error);
         return new ResponseError(500, 'Lỗi máy chủ nội bộ', false);
     }
 };
@@ -471,7 +473,9 @@ async function refreshAccessToken(req) {
     try {
         const refreshTokenRaw = req.headers.rftoken;
         const refreshToken = refreshTokenRaw.split(' ')[1];
-        if (!refreshToken) return new ResponseError(400, 'Yêu cầu không hợp lệ', false);
+        if (!refreshToken) {
+            return new ResponseError(400, 'Yêu cầu không hợp lệ', false);
+        }
         const isVerifyRefreshToken = jwt.verify(refreshToken, configs.general.JWT_SECRET_KEY);
         if (isVerifyRefreshToken) {
             const newAccessToken = jwt.sign(

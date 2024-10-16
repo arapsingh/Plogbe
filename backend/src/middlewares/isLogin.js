@@ -11,6 +11,7 @@ const isLogin = async (req, res, next) => {
             res.status(401).json({ message: 'Unauthorized' });
             return;
         } else {
+            console.log('jsonWebToken: ', jsonWebToken);
             const decodeJsonWebToken = jwt.verify(jsonWebToken, configs.general.JWT_SECRET_KEY);
             if (decodeJsonWebToken) {
                 const isFoundUser = await configs.db.user.findUnique({
