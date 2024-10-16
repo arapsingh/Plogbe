@@ -16,6 +16,8 @@ import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { handleReaction } from '../../../redux/slices/blog.slices.js';
 import CreateCommentEditor from './CreateCommentEditor.jsx';
+import { Pagination } from 'antd';
+
 const ViewCommentBox = ({ comment, className }) => {
     const isGetLoading = useAppSelector((state) => state.blogSlice.isGetLoading);
     const isLogin = useAppSelector((state) => state.userSlice.isLogin);
@@ -126,6 +128,7 @@ const ViewCommentBox = ({ comment, className }) => {
         }
     };
     const ExpandableList = ({ users }) => {
+        console.log('user:', users);
         return (
             <div>
                 <div ref={listRef} className={`overflow-y-auto ${users.length > 10 ? 'max-h-80' : ''}`}>
@@ -229,6 +232,29 @@ const ViewCommentBox = ({ comment, className }) => {
         });
     };
     const [isOpenReplyEditor, setIsOpenReplyEditor] = useState(false);
+    const [visibleCountReply, setVisibleCountReply] = useState(2); // Số bản ghi hiển thị ban đầu
+    const listReplyRef = useRef(null); // Tham chiếu đến danh sách reply
+    const handleLoadMoreReply = () => {
+        if (listReplyRef.current) {
+            const currentScrollHeight = listReplyRef.current.scrollHeight; // Chiều cao hiện tại của danh sách
+            const newVisibleCountReply = visibleCountReply + 3; // Tăng số bản ghi hiển thị
+            setVisibleCountReply(newVisibleCountReply); // Cập nhật số bản ghi hiển thị
+
+            // Sau khi cập nhật, cuộn thanh đến vị trí mới của các bản ghi
+            setTimeout(() => {
+                // Đợi cho bản ghi mới được hiển thị rồi cuộn
+                listReplyRef.current.scrollTop = currentScrollHeight; // Cuộn đến cuối danh sách
+            }, 0);
+        }
+    };
+
+    // Thu gọn danh sách về 5 bản ghi
+    const handleCollapseReply = () => {
+        setVisibleCountReply(2);
+        if (listReplyRef.current) {
+            listReplyRef.current.scrollTop = 0; // Đặt lại vị trí thanh cuộn về đầu
+        }
+    };
     return (
         <>
             {isGetLoading && <Spin />}
@@ -348,10 +374,31 @@ const ViewCommentBox = ({ comment, className }) => {
                         </div>
                     </div>
                     {Array.isArray(comment.replies) && comment.replies.length > 0 && (
-                        <div>
-                            {comment.replies.map((reply) => (
+                        <div
+                            ref={listReplyRef}
+                            className={`overflow-y-auto ${comment.replies.length > 5 ? 'max-h-screen' : ''}`}
+                        >
+                            {comment.replies.slice(0, visibleCountReply).map((reply) => (
                                 <ViewCommentBox key={reply.reply_id} comment={reply} className="bg-nav" />
                             ))}
+
+                            {comment.replies.length > visibleCountReply && (
+                                <p
+                                    onClick={handleLoadMoreReply}
+                                    className="container cursor-pointer underline hover:text-blue-500 italic"
+                                >
+                                    Xem thêm phản hồi
+                                </p>
+                            )}
+
+                            {visibleCountReply > 5 && (
+                                <p
+                                    onClick={handleCollapseReply}
+                                    className="container cursor-pointer underline hover:text-red-500 italic"
+                                >
+                                    Thu gọn
+                                </p>
+                            )}
                         </div>
                     )}
                     {isOpenReplyEditor && (

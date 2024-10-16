@@ -57,6 +57,8 @@ const Profile = () => {
                 dispatch(userActions.setLoading(false));
                 toast.error('Error updating avatar.');
             }
+        } else {
+            dispatch(userActions.setLoading(false));
         }
     };
     const onFinishFailed = () => {

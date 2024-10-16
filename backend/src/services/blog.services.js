@@ -353,6 +353,7 @@ async function getAllPagingBlog(req) {
                     user_id: item.user.id,
                     first_name: item.user.first_name,
                     last_name: item.user.last_name,
+                    url_avatar: item.user.url_image,
                 },
                 categories: item.blog_categories?.map((cc) => {
                     return {
@@ -904,9 +905,9 @@ async function deleteReactionCommentBlog(reaction_id) {
                 type: deleteReactionCommentBlog.type,
                 user: {
                     user_id: deleteReactionCommentBlog.user.id,
-                    first_name: deleteReactionCommentBlog.user.first_name,
-                    last_name: deleteReactionCommentBlog.user.last_name,
-                    url_avatar: deleteReactionCommentBlog.user.url_avatar,
+                    user_first_name: deleteReactionCommentBlog.user.first_name,
+                    user_last_name: deleteReactionCommentBlog.user.last_name,
+                    user_url_avatar: deleteReactionCommentBlog.user.url_avatar,
                 },
             });
         else return new ResponseError(400, 'Có lỗi trong quá trình xử lí dữ liệu', false);
@@ -935,9 +936,9 @@ async function createReactionCommentBlog(user_id, comment_id, type) {
                 type: createReactionCommentBlog.type,
                 user: {
                     user_id: createReactionCommentBlog.user.id,
-                    first_name: createReactionCommentBlog.user.first_name,
-                    last_name: createReactionCommentBlog.user.last_name,
-                    url_avatar: createReactionCommentBlog.user.url_avatar,
+                    user_first_name: createReactionCommentBlog.user.first_name,
+                    user_last_name: createReactionCommentBlog.user.last_name,
+                    user_url_avatar: createReactionCommentBlog.user.url_avatar,
                 },
             });
         else return new ResponseError(400, 'Có lỗi xảy ra trong quá trình xử lí dữ liệu', false);
@@ -1032,6 +1033,7 @@ async function getAllMyBlogs(req) {
                         user_id: item.user.id,
                         first_name: item.user.first_name,
                         last_name: item.user.last_name,
+                        url_avatar: item.user.url_avatar,
                     },
                 };
                 return blogs.push(blog);
@@ -1302,6 +1304,7 @@ const top5RelatedBySlug = async (req) => {
                     user_id: item.user.id,
                     first_name: item.user.first_name,
                     last_name: item.user.last_name,
+                    url_avatar: item.user.url_avatar,
                 },
                 categories: item.blog_categories.map((cc) => {
                     return {
@@ -1378,6 +1381,7 @@ const getNewestBlogWithPagination = async (req) => {
                     user_id: item.user.id,
                     first_name: item.user.first_name,
                     last_name: item.user.last_name,
+                    url_avatar: item.user.url_avatar,
                 },
                 categories: item.blog_categories.map((cc) => {
                     return {
@@ -1446,6 +1450,7 @@ const top10Like = async (req) => {
                     user_id: item.user.id,
                     first_name: item.user.first_name,
                     last_name: item.user.last_name,
+                    url_avatar: item.user.url_avatar,
                 },
                 categories: item.blog_categories.map((cc) => {
                     return {
@@ -1513,6 +1518,7 @@ const top10View = async (req) => {
                     user_id: item.user.id,
                     first_name: item.user.first_name,
                     last_name: item.user.last_name,
+                    url_avatar: item.user.url_avatar,
                 },
                 categories: item.blog_categories.map((cc) => {
                     return {

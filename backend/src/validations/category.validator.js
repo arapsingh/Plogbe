@@ -5,10 +5,10 @@ const createCategorySchema = Joi.object({
         'any.required': 'Tiêu đề danh mục là bắt buộc',
         'string.max': 'Tiêu đề danh mục phải dưới 50 kí tự',
     }),
-    description: Joi.string().trim().required().max(200).min(8).messages({
+    description: Joi.string().trim().required().max(800).min(8).messages({
         'string.base': 'Mô tả danh mục phải là chuỗi',
         'any.required': 'Mô tả danh mục là bắt buộc',
-        'string.max': 'Mô tả danh mục phải dưới 200 kí tự',
+        'string.max': 'Mô tả danh mục phải dưới 800 kí tự',
         'string.min': 'Mô tả danh mục phải trên 8 kí tự',
     }),
 });
@@ -18,10 +18,10 @@ const updateCategorySchema = Joi.object({
         'any.required': 'Tiêu đề danh mục là bắt buộc',
         'string.max': 'Tiêu đề danh mục phải dưới 50 kí tự',
     }),
-    description: Joi.string().trim().required().max(200).min(8).messages({
+    description: Joi.string().trim().required().max(800).min(8).messages({
         'string.base': 'Mô tả danh mục phải là chuỗi',
         'any.required': 'Mô tả danh mục là bắt buộc',
-        'string.max': 'Mô tả danh mục phải dưới 200 kí tự',
+        'string.max': 'Mô tả danh mục phải dưới 800 kí tự',
         'string.min': 'Mô tả danh mục phải trên 8 kí tự',
     }),
     category_id: Joi.number().required().messages({

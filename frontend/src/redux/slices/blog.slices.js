@@ -285,7 +285,7 @@ const blogSlice = createSlice({
         },
         handleReaction: (state, action) => {
             const updatedReaction = action.payload;
-            const { comment_id, user_id, type_req, parent_id } = updatedReaction;
+            const { comment_id, user, type_req, parent_id } = updatedReaction;
             if (parent_id) {
                 // Tìm comment chứa reply đó
                 const parentComment = state.blog.comments.find((comment) => comment.comment_id === parent_id);
@@ -303,7 +303,7 @@ const blogSlice = createSlice({
                         if (type_req === 'DELETE' || type_req === 'UPDATE') {
                             // Loại bỏ phản ứng cũ nếu là yêu cầu xóa hoặc cập nhật
                             replyToUpdate.reactions = replyToUpdate.reactions.filter(
-                                (reaction) => reaction.user_id !== user_id
+                                (reaction) => reaction.user.user_id !== user.user_id
                             );
                         }
 
@@ -324,12 +324,12 @@ const blogSlice = createSlice({
                     console.log('like update:', updatedReaction.like);
                     console.log('dislike update:', updatedReaction.dislike);
 
-                    commentToUpdate.reactions.findIndex((reaction) => reaction.user_id === user_id);
+                    commentToUpdate.reactions.findIndex((reaction) => reaction.user.user_id === user.user_id);
 
                     if (type_req === 'DELETE' || type_req === 'UPDATE') {
                         // Loại bỏ phản ứng cũ nếu là yêu cầu xóa hoặc cập nhật
                         commentToUpdate.reactions = commentToUpdate.reactions.filter(
-                            (reaction) => reaction.user_id !== user_id
+                            (reaction) => reaction.user.user_id !== user.user_id
                         );
                     }
 
