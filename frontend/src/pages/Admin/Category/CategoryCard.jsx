@@ -12,7 +12,7 @@ const CategoryCard = (props) => {
         const parser = new DOMParser();
         const contentDoc = parser.parseFromString(props.category.description, 'text/html');
         const textContent = contentDoc.body.textContent || '';
-        setIsLongText(textContent.length > 500);
+        setIsLongText(textContent.length > 100);
         setModifiedContent(contentDoc.body.innerHTML);
     }, [props.category.description]);
     const toggleTextDisplay = () => {
