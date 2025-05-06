@@ -56,18 +56,29 @@ const EditBlog = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const isGetLoading = useAppSelector((state) => state.blogSlice.isGetLoading);
+    const isGetLoadingCategory = useAppSelector((state) => state.categorySlice.isGetLoading);
     const isLoading = useAppSelector((state) => state.blogSlice.isLoading);
     const { slug } = useParams();
     const dispatch = useAppDispatch();
     const blog = useAppSelector((state) => state.blogSlice.blog);
+
+    const [isBlogLoaded, setIsBlogLoaded] = useState(false);
 
     useEffect(() => {
         dispatch(blogActions.getBlogBySlug(slug));
     }, [dispatch, slug]);
 
     useEffect(() => {
-        dispatch(categoryActions.getCategories());
-    }, [dispatch, blog.blog_id]);
+        if (blog.blog_id) {
+            setIsBlogLoaded(true); // Khi blog được tải thành công, đánh dấu là đã tải
+        }
+    }, [blog]);
+
+    useEffect(() => {
+        if (isBlogLoaded) {
+            dispatch(categoryActions.getCategories());
+        }
+    }, [isBlogLoaded, dispatch]);
     const yupSync = {
         async validator({ field }, value) {
             await editBlogValidationSchema.validateSyncAt(field, { [field]: value });
@@ -173,8 +184,7 @@ const EditBlog = () => {
         try {
             // const values = await form.validateFields(); // Get values from form
             const content = values.content;
-            if(content.length<1)
-            {
+            if (content.length < 1) {
                 toast.error('Content phải có nội dung');
                 return;
             }
@@ -233,7 +243,7 @@ const EditBlog = () => {
     };
     return (
         <>
-            {isGetLoading || (isLoading && <Spin />)}
+            {(isGetLoading || isLoading || isGetLoadingCategory) && <Spin />}
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider style={siderStyle} width={300}>
                     <Link

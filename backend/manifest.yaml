@@ -1,0 +1,26 @@
+---
+applications:
+    - name: plogbe_backend
+      random-route: false
+      path: .
+      memory: 1024M
+      disk_quota: 2048M
+      buildpacks:
+          - nodejs_buildpack
+      routes:
+          - route: plogbe.cfapps.us10-001.hana.ondemand.com
+
+      env:
+        DATABASE_URL: "mysql://u92sy60zaftudsee:zylS3JsNYSK7qx4mH3D@boobcufq0gtr53szgye2-mysql.services.clever-cloud.com:20597/boobcufq0gtr53szgye2"
+        DOMAIN_NAME: "https://plogbe.vercel.app"
+        BACKEND_DOMAIN_NAME: "https:\\\\plogbe.cfapps.us10-001.hana.ondemand.com"
+        TOKEN_ACCESS_EXPIRED_TIME: "15m"
+        TOKEN_REFRESH_EXPIRED_TIME: "10d"
+        PUBLIC_URL: "https://plogbe.cfapps.us10-001.hana.ondemand.com"
+        PUBLIC_API_URL: "https://plogbe.cfapps.us10-001.hana.ondemand.com/api"
+        JWT_SECRET_KEY: "Utemy"
+        HASH_SALT: "10"
+        EMAIL_SERVER: "utemyvietnam@gmail.com"
+        PASSWORD_SERVER: "xmxfhgajalgcxxtk"
+        PAGE_SIZE: "10"
+        TZ: "Asia/Ho_Chi_Minh"
