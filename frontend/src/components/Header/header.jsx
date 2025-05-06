@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import UserDropDown from '../UserDropDown.jsx';
 import PropTypes from 'prop-types'; // Import PropTypes
 import { Toaster } from 'react-hot-toast';
+import { Button } from 'antd';
 const Header = ({ isLogin }) => {
     const navigate = useNavigate();
 
@@ -20,8 +21,8 @@ const Header = ({ isLogin }) => {
     const avatar = useAppSelector((state) => state.userSlice.user.url_avatar);
 
     return (
-        <header className="header flex items-center justify-between p-4 bg-lightorange">
-                    <Toaster />
+        <header className="header flex items-center justify-between p-4 bg-gray">
+            <Toaster />
 
             {/* Biểu tượng Blog bên trái */}
             <div className="logo flex items-center">
@@ -39,18 +40,23 @@ const Header = ({ isLogin }) => {
                     <UserDropDown avatar={avatar} />
                 ) : (
                     <div className="auth-buttons flex space-x-4">
-                        <button
+                        <Button
                             onClick={handleLoginClick}
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 "
+                            className="px-4 py-2 bg-blue-500 text-white"
+                            shape="round" // Nút có góc bo tròn
+                            size="large"
                         >
                             Đăng nhập
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={handleSignupClick}
-                            className="px-4 py-2 bg-white text-blue-500 border border-blue-500 rounded hover:bg-gray-100"
+                            type = "primary"
+                            className="px-4 py-2 bg-white text-blue-500"
+                            shape="round" // Nút có góc bo tròn
+                            size="large"
                         >
                             Đăng kí
-                        </button>
+                        </Button>
                     </div>
                 )}
             </div>

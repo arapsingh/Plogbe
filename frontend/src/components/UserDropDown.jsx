@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Dropdown, Menu, Button } from 'antd';
 import { DefaultAvatar } from '../assets/images';
-import { useAppDispatch } from '../hooks/hooks.ts';
+import { useAppDispatch, useAppSelector } from '../hooks/hooks.ts';
 import { useNavigate } from 'react-router-dom';
 import { userActions } from '../redux/slices';
 import { ProfileOutlined, LogoutOutlined, ReadOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types'; // Import PropTypes
-import axios from 'axios'
+import axios from 'axios';
 const UserDropDown = ({ avatar }) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -15,6 +15,7 @@ const UserDropDown = ({ avatar }) => {
         localStorage.removeItem('messages');
         navigate('/');
     };
+    
     const handleViewProfile = () => {
         dispatch(userActions.getMe());
         navigate('/profile');
@@ -22,6 +23,10 @@ const UserDropDown = ({ avatar }) => {
     const handleMyBlogClick = () => {
         navigate('/my-blog');
     };
+    const handleMyReturnAdminPageClick = () => {
+        navigate('/admin');
+    };
+    const currentUser = useAppSelector((state) => state.userSlice.currentUser);
     // const [imageUrl, setImageUrl] = useState('');
     // useEffect(() => {
     //     const fetchImage = async () => {
@@ -67,6 +72,16 @@ const UserDropDown = ({ avatar }) => {
                     <div className="flex-1 flex flex-col text-[18px]">Blog của tôi</div>
                 </div>
             </Menu.Item>
+            {currentUser?.is_admin && currentUser?.is_admin !== undefined && (
+                <Menu.Item key="myblog" onClick={handleMyReturnAdminPageClick}>
+                    <div className="flex flex-col gap-3 mb-2 tablet:flex-row">
+                        <div className="flex-1/3 flex flex-col">
+                            <ReadOutlined style={{ fontSize: '30px', color: '#08c' }} />
+                        </div>
+                        <div className="flex-1 flex flex-col text-[18px]">Quản lí cho admin</div>
+                    </div>
+                </Menu.Item>
+            )}
             <Menu.Item key="logout" onClick={handleLogout}>
                 <div className="flex flex-col gap-3 mb-2 tablet:flex-row">
                     <div className="flex-1/3 flex flex-col">
