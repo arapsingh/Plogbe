@@ -8,3 +8,4 @@ Dockerfile
 dist
 netlify
 .netlify
+/manifest.yaml
